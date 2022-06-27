@@ -1,0 +1,47 @@
+.resumecontent{
+    background-color: white;
+    display: grid;
+    place-items :   center;
+    text-align: justify;
+}
+
+#name{
+    font-size: 6vw;
+    text-align: center;    
+}
+
+#underlink{
+    display: flexbox;
+    text-align: center;
+    font-size: 2.5vw;
+}
+
+#number{
+    font-size: 3vw;
+    text-align: center;
+}
+
+#content{
+    font-size: 3vw;
+    margin: 0vw 1vw 0vw 10vw ;    
+}
+
+h5{
+    font-size: 3vw;
+}
+
+p{
+    margin: 0vw 4vw 0vw 5vw;
+    text-indent: 10%;
+}
+
+ol{
+    margin: 0vw 4vw 0vw 5vw; 
+}
+
+table{
+    
+    margin:auto ;
+    width: 70%;
+}
+
