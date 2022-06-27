@@ -1,10 +1,14 @@
 .resumecontent{
-    background-color: white;
+   
     display: grid;
     place-items :   center;
     text-align: justify;
 }
-
+#header{
+    padding: 20px;
+    width: 100vw;
+    background-color:lightsalmon;
+}
 #name{
     font-size: 6vw;
     text-align: center;    
@@ -23,7 +27,9 @@
 
 #content{
     font-size: 3vw;
-    margin: 0vw 1vw 0vw 10vw ;    
+    margin: 0vw 5vw 0vw 10vw ;
+    padding: 2vw
+        
 }
 
 h5{
@@ -44,4 +50,6 @@ table{
     margin:auto ;
     width: 70%;
 }
-
+.info{
+    visibility:collapse;
+}
