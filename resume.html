@@ -20,16 +20,17 @@
 
             <div id="underlink">
             
-                <a href ="" class="link">k.s.venkat614@gmail.com</a> |
-                <a href="" class="link">https://github.com/VenkatTrivedhi</a>
+                <a href ="https://k.s.venkat614@gmail.com" class="link">k.s.venkat614@gmail.com</a> |
+                <a href="https://github.com/VenkatTrivedhi" class="link">https://github.com/VenkatTrivedhi</a>
             </div>
             
         </div>
 
         <div id="content">
-            <div id="objective">
-                <div>
-                    <h5>Career Objectives</h5>
+            <div class="items" id="objective">
+                <h5 onclick=showinfo('#careerinfo')>Career Objectives</h5>
+                <div id="careerinfo"class="info">
+
                     <p>
                         Seeking an opportunity to join as software developer to keep myself in
                         coding ,problem solving , challenge breaking career.
@@ -38,13 +39,14 @@
                         with Knowledge of Web development (both front end and backend)
                         and Data structures, Programming
                     </p>
-               </div>
+                    </div>
             </div>
+        
 
 
-            <div id="skills">
-                <h5>Technical skills</h5>
-                <div class="info">
+            <div class="items" id="skills">
+                <h5 onclick=showinfo('#techinfo')>Technical skills</h5>
+                <div id ="techinfo"class="info">
                     <table >
                         <tr>
                             <td>Programming</td>
@@ -75,29 +77,29 @@
                 </div>
             </div>
 
-            <div id="Works">
-                <h5>Works</h5>
+            <div class = "items" id="Works">
+                <h5 onclick= showinfo("#workinfo")>Works</h5>
 
-                <div>
+                <div id="workinfo"class="info">
                     <ol>
                         <li>
-                            <a class = "link" href="" >https://github.com/VenkatTrivedhi/Val</a>
+                            <a class = "link" href="https://github.com/VenkatTrivedhi/Val" >https://github.com/VenkatTrivedhi/Val</a>
                         </li>
                         
                         <li>
-                            <a class = "link" href="">https://github.com/VenkatTrivedhi/Todo</a>
+                            <a class = "link" href="https://github.com/VenkatTrivedhi/Todo">https://github.com/VenkatTrivedhi/Todo</a>
                         </li>
                         <li>
-                            <a class = "link" href="">https://github.com/VenkatTrivedhi/tradex</a>
+                            <a class = "link" href="https://github.com/VenkatTrivedhi/tradex">https://github.com/VenkatTrivedhi/tradex</a>
                         </li>
                     </ol>
                 </div>
         
             </div>
 
-            <div id="education">
-                <h5>Education</h5>
-                <div class="info">
+            <div class = "items" id="education">
+                <h5 onclick=showinfo("#eduinfo")>Education</h5>
+                <div id="eduinfo" class="info">
                     <p>
                         <b>B.tech</b> from Rajiv Gandhi University of Knowledge Technologies - Nuzvid
                     </p>
@@ -108,4 +110,5 @@
                     
     </div>
 </body>
+<script src="./resume.js"></script>
 </html>

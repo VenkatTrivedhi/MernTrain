@@ -7,7 +7,7 @@
 #header{
     padding: 20px;
     width: 100vw;
-    background-color:lightsalmon;
+    background-color:lightgrey;
 }
 #name{
     font-size: 6vw;
@@ -34,6 +34,16 @@
 
 h5{
     font-size: 3vw;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: lightgrey;
+}
+
+h5:hover{
+    background-color: rgba(0, 0, 0, 0.719);
+    color: white;
+
+
 }
 
 p{
@@ -48,8 +58,9 @@ ol{
 table{
     
     margin:auto ;
-    width: 70%;
+    width: 70
 }
 .info{
-    visibility:collapse;
+    display: none;
+    
 }
