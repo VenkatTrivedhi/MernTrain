@@ -10,13 +10,19 @@
 
 <style>
     .resumecontent{
-        background-color: white;
+        border : 3px black groove;
         display: grid;
         place-items :   center;
         text-align: justify;
     }
 
-  
+    #header{
+        background-color: blanchedalmond;
+        padding: 50px;
+        border: brown 8px solid;
+        border-radius: 50px;
+    }
+    
     #name{
         font-size: 6vw;
         text-align: center;    
@@ -29,18 +35,41 @@
     }
 
     #number{
+      
         font-size: 3vw;
         text-align: center;
     }
 
     #content{
         font-size: 3vw;
-        margin: 0vw 1vw 0vw 10vw ;    
+        padding: 20px;
+
+    }
+
+    .items{
+        margin: 10px;
+        padding: 10px;
+        background-color: blanchedalmond;
+        border-radius: 50px;
+    
+    }
+
+    .info{
+        
+        font-size: 3vw;
     }
     
     h5{
+        background-color: brown;
+        display: inline-block;
+        margin: 0;
+        padding: 20px;
         font-size: 3vw;
+        color: white;
+        border-radius: 30px;
     }
+
+    
 
     p{
         margin: 0vw 4vw 0vw 5vw;
@@ -49,6 +78,7 @@
 
     ol{
         margin: 0vw 4vw 0vw 5vw; 
+      
     }
 
     table{
@@ -72,16 +102,17 @@
 
             <div id="underlink">
             
-                <a href ="" class="link">k.s.venkat614@gmail.com</a> |
-                <a href="" class="link">https://github.com/VenkatTrivedhi</a>
+                <a href ="https://k.s.venkat614@gmail.com" class="link">k.s.venkat614@gmail.com</a> |
+                <a href="https://github.com/VenkatTrivedhi" class="link">https://github.com/VenkatTrivedhi</a>
             </div>
             
         </div>
 
         <div id="content">
-            <div id="objective">
-                <div>
-                    <h5>Career Objectives</h5>
+            <div class="items" id="objective">
+                <h5>Career Objectives</h5>
+                <div class="info">
+
                     <p>
                         Seeking an opportunity to join as software developer to keep myself in
                         coding ,problem solving , challenge breaking career.
@@ -90,11 +121,12 @@
                         with Knowledge of Web development (both front end and backend)
                         and Data structures, Programming
                     </p>
-               </div>
+                    </div>
             </div>
+        
 
 
-            <div id="skills">
+            <div class="items" id="skills">
                 <h5>Technical skills</h5>
                 <div class="info">
                     <table >
@@ -127,27 +159,27 @@
                 </div>
             </div>
 
-            <div id="Works">
+            <div class = "items" id="Works">
                 <h5>Works</h5>
 
-                <div>
+                <div class="info">
                     <ol>
                         <li>
-                            <a class = "link" href="" >https://github.com/VenkatTrivedhi/Val</a>
+                            <a class = "link" href="https://github.com/VenkatTrivedhi/Val" >https://github.com/VenkatTrivedhi/Val</a>
                         </li>
                         
                         <li>
-                            <a class = "link" href="">https://github.com/VenkatTrivedhi/Todo</a>
+                            <a class = "link" href="https://github.com/VenkatTrivedhi/Todo">https://github.com/VenkatTrivedhi/Todo</a>
                         </li>
                         <li>
-                            <a class = "link" href="">https://github.com/VenkatTrivedhi/tradex</a>
+                            <a class = "link" href="https://github.com/VenkatTrivedhi/tradex">https://github.com/VenkatTrivedhi/tradex</a>
                         </li>
                     </ol>
                 </div>
         
             </div>
 
-            <div id="education">
+            <div class = "items" id="education">
                 <h5>Education</h5>
                 <div class="info">
                     <p>
