@@ -1,14 +1,15 @@
-// 
-for (let i=0;i<=10000;i++){
+for (let i=0;i<=100000;i++){
 
-    let sum = 0
-    number = i.toString();
-    
-    for(let digit of number){   
-        digit = parseInt(digit)    
-        sum = sum + digit**3 
+    let amstrongSum = 0
+    number= ""+i
+    length = number.length
+
+    for(let digit_string of number){  
+        digit_int = digit_string*1  
+        cube = digit_int**length
+        amstrongSum = amstrongSum + cube 
     } 
-    if (sum==i){
+    if (amstrongSum==i){
         console.log(i)
     }
 
