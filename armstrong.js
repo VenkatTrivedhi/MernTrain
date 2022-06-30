@@ -18,7 +18,7 @@ for (let number=0;number<=100000;number++){
 
     //checking amstrong or not 
     if (amstrongSum==number){
-        console.log('${i} is Amstrong number')
+        console.log(`${number} is Amstrong number`)
     }
 
 }

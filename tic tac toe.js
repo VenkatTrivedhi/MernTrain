@@ -1,37 +1,34 @@
-// readign name of players from user
-player1 = prompt("enter name of player1:")
-player2 = prompt("enter name of player2:")
-// using 2-D array to get structure of 3*3 grid of tic tak toe 
+
+let player1 = prompt("enter name of player1:")
+let player2 = prompt("enter name of player2:")
+
+
 var grid = [[null,null,null],[null,null,null],[null,null,null]]
         
-// global variable for checking,updating  game over status
 var gameOver = false
 
-// global variable for holding winner
 var winner = null
 
-// global variable to know who is playing now
 var currentPlayer = player1
 
-
-//global variable for knowing how many boxes marked
 var countMark = 0
 
-// function for cheking and updating gameOver 
+
+
 let checkGameOVer=()=>{
     //if some one won in last turn it won't be game over  
     if (winner!=null){
         return
     }
-    // if counMark reaches 9 marks it is game over 
+    
     if (countMark>=9){
         gameOver=true
         console.log("Game Over")
     }
-
 }
 
-//function for checking and updating winner
+
+
 let checkWinner=(player)=>{
      
     //checking horizantal lines
@@ -44,10 +41,8 @@ let checkWinner=(player)=>{
         // we should skip this iteration with bellow condition
         if(left_cell===null){
             continue
-            //even if one cell in row is null ,it won'tbe winning case
         }
         
-        // checking whether all 3 cells got same player,to declare winner
         if (left_cell==middle_cell&&middle_cell==right_cell){
             winner = player
             console.log(winner+" is winner")
@@ -55,7 +50,7 @@ let checkWinner=(player)=>{
             }
         }
 
-    //// checking vertical lines
+    // checking vertical lines
     for (let i=0;i<3;i++){
 
         let top_cell = grid[0][i];
@@ -64,10 +59,8 @@ let checkWinner=(player)=>{
         
         if(top_cell===null){
             continue
-            //even if one cell in row is null ,it won'tbe winning case
         }
          
-        //if all 3 vertical cells got same player, can declare him as winner
         if (top_cell==center_cell&&center_cell==bottom_cell){
             winner = player
             console.log(winner+" is winner")
@@ -84,7 +77,6 @@ let checkWinner=(player)=>{
     let top_left = grid[0][2] ;
     let bottom_right = grid[2][0] ;
       
-    // if center is null then both diagnals won't contain winner
     if(center===null){
         return
     }
@@ -98,8 +90,8 @@ let checkWinner=(player)=>{
         winner = player
         console.log(winner+" is winner")
     }
-        
 }
+
 
 // function for marking position
 let mark=(player,position)=>{
@@ -108,7 +100,6 @@ let mark=(player,position)=>{
     let first_index = Math.floor(position/3)
     let second_index = position%3
 
-    //getting the value of given position
     let value = grid[first_index][second_index]
 
     // incase of position was already filled
@@ -132,16 +123,18 @@ let mark=(player,position)=>{
         // checking whether someone win
         checkWinner(player)
         
-        // checking whether game over
-        checkGameOVer()    
-        
-        //changing player for next turn
-        if(gameOver===true){
-            return
-        }
         if (winner!=null){
             return
         }
+        
+        // checking whether game over
+        checkGameOVer()    
+        
+        if(gameOver===true){
+            return
+        }
+        
+        //changing player for next turn
         if (player===player1){
             currentPlayer=player2
         }
@@ -149,7 +142,6 @@ let mark=(player,position)=>{
             currentPlayer=player1
         }
     }
-    
 }
 
 
@@ -159,7 +151,7 @@ let turn=(player,message="")=>{
     let input = prompt(player+"-turn,"+message+":")
 
 
-    // to exit  from prompt
+    // to exit from prompt
     if(input===null){
         gameOver= true
         console.log('exited from game ,refresh to restart')
@@ -184,7 +176,7 @@ let turn=(player,message="")=>{
         turn(player,message)
     }
 
-    //after getting position we will try to mark the position,with that player
+    //after getting a valid position we will try to mark the position
     if (0<position&&position<10){
     mark(player,position-1)
     }
