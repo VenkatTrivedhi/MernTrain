@@ -6,7 +6,7 @@ let prime = (number, factor1) => {
     //if reminder is 0 when number divided by the factor1,
     // then the factor1 is really a factor, and number is not a prime.
     if (number % factor1 === 0) {
-        console.log("it is Not Prime number")
+        console.log(`${number} is Not Prime number`)
         return
     }
 
@@ -16,7 +16,7 @@ let prime = (number, factor1) => {
     //the same factor will be repeated in reverse
     //so no need continue search for factors
     if (factor1 > factor2) {
-        console.log("it is Prime number")
+        console.log(`${number} is Prime number`)
         return
     }
 

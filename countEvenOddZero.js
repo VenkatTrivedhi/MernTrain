@@ -30,11 +30,13 @@ let countEvenOddZero=(arr)=>{
 let read=()=>{
     let NumberOfElements = prompt('Enter No.of elements in array')
     
-    arr = []
+    const arr = []
     for(i=0;i<NumberOfElements;i++){
         input = prompt("enter a element")
         arr.push(input)
     }
+    
+    console.log(arr)
 
     countEvenOddZero(arr)   
 }

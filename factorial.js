@@ -35,7 +35,7 @@ let read=(message='enter a number')=>{
     }
 
     if (input>=0){        
-        console.log(factorial(input))
+        console.log(`factorial of ${input} is ${factorial(input)}`)
     }
 }
 

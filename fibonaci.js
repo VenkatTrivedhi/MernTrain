@@ -54,7 +54,7 @@ let readInput=(msg="enter number")=>{
     let firstNumber = arr[0]
     let secondNumber = arr[1]
 
-    console.log(fibanoci(firstNumber,secondNumber))
+    console.log(`sum of fibonaci series(${firstNumber},${secondNumber}...) is ${fibanoci(firstNumber,secondNumber)}`)
 }
     
 readInput()
