@@ -16,8 +16,25 @@ class Student {
         this.numberofYearsofGraduation = years_of_gradution
 
     }
+  
+    // making auto updatefunction for derived field for code reusability
+    static autoUpdateFullname(firstname,lastname){
+        let fullname = firstname+lastname
+        return fullname
+    }
+    static autoUpdateFirstname(fullname){
+        let splitedname =  fullname.split()
+        let firstname = splitedname[0]
+        return firstname
+    }
 
-    static autoAge(Dob){
+    static autoUpdateLastname(fullname){
+        let splitedname = fullname.split()
+        let lastname = splitedname[1]
+        return lastname
+    }
+
+    static autoUpdateAge(Dob){
         
         const currentDate = new Date()
         let currentMonth = currentDate.getMonth()
@@ -46,7 +63,9 @@ class Student {
         return age
     }
 
-    static autoCGPA(SGPA){
+    
+
+    static autoUpdateCGPA(SGPA){
         let sumofGPA = 0;
         let countofGPAs = 0;
 
@@ -60,7 +79,7 @@ class Student {
         return CGPA
     }
 
-    static autoGrade(sem_grades){
+    static autoUpdateGrade(sem_grades){
 
         let finaleGrade;
         const scoreofTheGrade = {
@@ -89,14 +108,14 @@ class Student {
     }
 
 
-    static createStudent(firstname, lastname, Dob, SGPA, sem_grades, enrolled_year, passed_year) {
-        let fullname = `${firstname} ${lastname}`
+    static createStudent(firstname, lastname, Dob, SGPA, sem_grades, enrolled_year, passed_year){
+        let fullname = this.autoUpdateFullname(firstname,lastname)
 
-        let age =this.autoAge(Dob)
+        let age =this.autoUpdateAge(Dob)
         
-        let CGPA = this.autoCGPA(SGPA)
+        let CGPA = this.autoUpdateCGPA(SGPA)
         
-        let finaleGrade =this.autoGrade(sem_grades)
+        let finaleGrade =this.autoUpdateGrade(sem_grades)
        
         let numberofYearsofGraduation = passed_year - enrolled_year
 
@@ -148,38 +167,11 @@ class Student {
         this.displayYearsofGraduation()
     }
 
-    displayFullname() { console.log(`name is : ${this.fullname}`) }
-    displayFirstname() { console.log(`firstname is : ${this.firstname}`) }
-    displayLastname() { console.log(`lastname is :${this.lastname}`) }
-    displayDateofBirth() { console.log(`date of birth is : ${this.dateOfBirth}`) }
-    displayAge() { console.log(`age is : ${this.age}`) }
-    displaySemisterGrades() { console.log(`grades of all semisters is : ${this.semisterGrades}`) }
-    displayFinaleGrade() { console.log(`final is : ${this.finaleGrade}`) }
-    displaySemisterGPAs() { console.log(`GPAs of all semisters is : ${this.semisterCGPs}`) }
-    displayFinaleCGP() { console.log(`CPG is : ${this.finaleCGP}`) }
-    displayYearofEnrollment() { console.log(`year of enrollment is : ${this.yearofEnrollement}`) }
-    displayYearofPassed() { console.log(`year of pass is : ${this.yearofPassed}`) }
-    displayYearsofGraduation() { console.log(`no of years of graduation is ${this.numberofYearsofGraduation}`) }
-
-
-    updateFullname(fullname) { this.fullname = fullname }
-    updateFirstname(firstname) { this.firstname = firstname }
-    updateLastname(lastname) { this.lastname = lastname }
-    updateDateofBirth(dateOfBirth) { this.dateOfBirth = dateOfBirth }
-    updateAge(age) { this.age = age }
-    updateSemisterGrades(semisterGrades) { this.semisterGrades = semisterGrades }
-    updateFinaleGrade(finaleGrade) { this.finaleGrade = finaleGrade }
-    updateSemisterGPAs(semisterCGPs) { this.semisterCGPs = semisterCGPs }
-    updateFinaleCGP(finaleCGP) { this.finaleCGP = finaleCGP }
-    updateYearofEnrollment(yearofEnrollement) { this.yearofEnrollement = yearofEnrollement }
-    updateYearofPassed(yearofPassed) { this.yearofPassed = yearofPassed }
-    updateYearsofGraduation(numberofYearsofGraduation) { this.numberofYearsofGraduation = numberofYearsofGraduation }
-   
-
+  
     update(propertyTobeUpdated,value){
         this[propertyTobeUpdated]=value
         
-        //special case for fullname as it is linked with first & lastname
+        //re-updating derived fields
         if (propertyTobeUpdated=="firstname"){
             this.fullname =`${value} ${this.lastname}`
         } 
@@ -188,9 +180,8 @@ class Student {
             this.fullname = `${this.firstname} ${value}`
         }
         if (propertyTobeUpdated="fullname"){
-            let splitedname = value.split()
-            this.firstname = splitedname[0]
-            this.lastname = splitedname[1]
+            this.firstname = this.autoUpdateFirstname(value)
+            this.lastname = this.autoUpdateLastname(value)
         }
 
         if (propertyTobeUpdated=="age"){
@@ -199,15 +190,15 @@ class Student {
         }
 
         if (propertyTobeUpdated=="dateofBirth"){
-            this.age =this.autoAge(value)
+            this.age =this.autoUpdateAge(value)
         }
         
         if (propertyTobeUpdated=="semisterGrades"){
-            this.finaleGrade = this.autoGrade(value)
+            this.finaleGrade = this.autoUpdateGrade(value)
         }
 
         if(propertyTobeUpdated=="semisterCGPs"){
-            this.finaleCGP = this.autoCGPA(value)
+            this.finaleCGP = this.autoUpdateCGPA(value)
         }
 
         if (propertyTobeUpdated=="yearofEnrollement"){
@@ -216,9 +207,48 @@ class Student {
         if (propertyTobeUpdated=="yearofPassed"){
             this.numberofYearsofGraduation = passed_year - enrolled_year
         }
-
-
     }
+
+    updateFullname(fullname) {
+        this.fullname = fullname
+        this.firstname = this.autoFirstname(fullname)
+        this.lastname = this.autoLastname(fullname)
+    }
+    updateFirstname(firstname) {
+        this.firstname = firstname
+        this.fullname = this.autoFullname(firstname,this.lastname)
+    }
+    updateLastname(lastname){
+        this.lastname = lastname
+        this.fullname = this.autoFullname(this.firstname,lastname)
+    }
+    updateDateofBirth(dateOfBirth){
+        this.dateOfBirth = dateOfBirth
+        this.age = this.autoAge(dateOfBirth)
+    }
+    
+    
+    updateSemisterGrades(semisterGrades){
+        this.semisterGrades = semisterGrades
+        this.finaleGrade = this.autoGrade(semisterGrades)
+    }
+  
+    updateSemisterGPAs(semisterCGPs){
+        this.semisterCGPs = semisterCGPs
+        this.finaleCGP = this.updateFinaleCGP(semisterCGPs)
+    }
+    
+    updateYearofEnrollment(yearofEnrollement){
+        this.yearofEnrollement = yearofEnrollement
+        this.numberofYearsofGraduation = this.yearofPassed -yearofEnrollement
+    }
+    
+    updateYearofPassed(yearofPassed){
+        this.yearofPassed = yearofPassed
+        this.numberofYearsofGraduation = yearofPassed - this.yearofEnrollement
+        
+    }
+
 
 }
 
