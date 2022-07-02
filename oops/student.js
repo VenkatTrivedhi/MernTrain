@@ -18,23 +18,23 @@ class Student {
     }
   
     // making auto updatefunction for derived field for code reusability
-    static autoUpdateFullname(firstname,lastname){
+    static #autoUpdateFullname(firstname,lastname){
         let fullname = firstname+lastname
         return fullname
     }
-    static autoUpdateFirstname(fullname){
+    static #autoUpdateFirstname(fullname){
         let splitedname =  fullname.split()
         let firstname = splitedname[0]
         return firstname
     }
 
-    static autoUpdateLastname(fullname){
+    static #autoUpdateLastname(fullname){
         let splitedname = fullname.split()
         let lastname = splitedname[1]
         return lastname
     }
 
-    static autoUpdateAge(Dob){
+    static #autoUpdateAge(Dob){
         
         const currentDate = new Date()
         let currentMonth = currentDate.getMonth()
@@ -65,7 +65,7 @@ class Student {
 
     
 
-    static autoUpdateCGPA(SGPA){
+    static #autoUpdateCGPA(SGPA){
         let sumofGPA = 0;
         let countofGPAs = 0;
 
@@ -79,7 +79,7 @@ class Student {
         return CGPA
     }
 
-    static autoUpdateGrade(sem_grades){
+    static #autoUpdateGrade(sem_grades){
 
         let finaleGrade;
         const scoreofTheGrade = {
@@ -109,13 +109,13 @@ class Student {
 
 
     static createStudent(firstname, lastname, Dob, SGPA, sem_grades, enrolled_year, passed_year){
-        let fullname = this.autoUpdateFullname(firstname,lastname)
+        let fullname = this.#autoUpdateFullname(firstname,lastname)
 
-        let age =this.autoUpdateAge(Dob)
+        let age =this.#autoUpdateAge(Dob)
         
-        let CGPA = this.autoUpdateCGPA(SGPA)
+        let CGPA = this.#autoUpdateCGPA(SGPA)
         
-        let finaleGrade =this.autoUpdateGrade(sem_grades)
+        let finaleGrade =this.#autoUpdateGrade(sem_grades)
        
         let numberofYearsofGraduation = passed_year - enrolled_year
 
@@ -169,36 +169,47 @@ class Student {
 
   
     update(propertyTobeUpdated,value){
+
+        if (propertyTobeUpdated=="age"){
+            console.log("age cannont be updated")
+            return "age cannont be updated"       
+        }
+        if (propertyTobeUpdated=="finaleGrade"){
+            console.log("finaleGrade cannont be updated")
+            return "finaleGrade cannont be updated"       
+        }
+        if (propertyTobeUpdated=="finaleCGP"){
+            console.log("finaleCGP cannont be updated")
+            return "finaleCGP cannont be updated"       
+        }
+
+        //updating 
         this[propertyTobeUpdated]=value
         
         //re-updating derived fields
         if (propertyTobeUpdated=="firstname"){
             this.fullname =`${value} ${this.lastname}`
-        } 
+        }
+
 
         if (propertyTobeUpdated=="lastname"){
             this.fullname = `${this.firstname} ${value}`
         }
         if (propertyTobeUpdated="fullname"){
-            this.firstname = this.autoUpdateFirstname(value)
-            this.lastname = this.autoUpdateLastname(value)
-        }
-
-        if (propertyTobeUpdated=="age"){
-            console.log("age cannonot be updated")
-
+            this.firstname = Student.#autoUpdateFirstname(value)
+            this.lastname = Student.#autoUpdateLastname(value)
         }
 
         if (propertyTobeUpdated=="dateofBirth"){
-            this.age =this.autoUpdateAge(value)
+            this.age =this.#autoUpdateAge(value)
         }
         
         if (propertyTobeUpdated=="semisterGrades"){
-            this.finaleGrade = this.autoUpdateGrade(value)
+            this.finaleGrade = this.#autoUpdateGrade(value)
         }
 
         if(propertyTobeUpdated=="semisterCGPs"){
-            this.finaleCGP = this.autoUpdateCGPA(value)
+            this.finaleCGP = this.#autoUpdateCGPA(value)
         }
 
         if (propertyTobeUpdated=="yearofEnrollement"){
@@ -211,31 +222,31 @@ class Student {
 
     updateFullname(fullname) {
         this.fullname = fullname
-        this.firstname = this.autoFirstname(fullname)
-        this.lastname = this.autoLastname(fullname)
+        this.firstname = this.#autoUpdateFirstname(fullname)
+        this.lastname = this.#autoUpdateLastname(fullname)
     }
     updateFirstname(firstname) {
         this.firstname = firstname
-        this.fullname = this.autoFullname(firstname,this.lastname)
+        this.fullname = this.#autoUpdateFullname(firstname,this.lastname)
     }
     updateLastname(lastname){
         this.lastname = lastname
-        this.fullname = this.autoFullname(this.firstname,lastname)
+        this.fullname = this.#autoUpdateFullname(this.firstname,lastname)
     }
     updateDateofBirth(dateOfBirth){
         this.dateOfBirth = dateOfBirth
-        this.age = this.autoAge(dateOfBirth)
+        this.age = this.#autoUpdateAge(dateOfBirth)
     }
     
     
     updateSemisterGrades(semisterGrades){
         this.semisterGrades = semisterGrades
-        this.finaleGrade = this.autoGrade(semisterGrades)
+        this.finaleGrade = this.#autoUpdateGrade(semisterGrades)
     }
   
     updateSemisterGPAs(semisterCGPs){
         this.semisterCGPs = semisterCGPs
-        this.finaleCGP = this.updateFinaleCGP(semisterCGPs)
+        this.finaleCGP = this.#autoUpdateCGPA(semisterCGPs)
     }
     
     updateYearofEnrollment(yearofEnrollement){
@@ -245,8 +256,7 @@ class Student {
     
     updateYearofPassed(yearofPassed){
         this.yearofPassed = yearofPassed
-        this.numberofYearsofGraduation = yearofPassed - this.yearofEnrollement
-        
+        this.numberofYearsofGraduation = yearofPassed - this.yearofEnrollement    
     }
 
 
@@ -259,14 +269,15 @@ date.setDate(04)
 date.setMonth(05)
 date.setFullYear(2000)
 
-// display all
+
 const einsten = Student.createStudent("albert", "einsten", date, [5, 6, 7, 8, 9], ["A", "B", "A", "B"], 2014, 2018)
-console.log("Creation:")
+console.log("Created object :")
 console.log(einsten)
 
-console.log('Read:')
-console(einsten.display())
+console.log('Display all:')
+console.log(einsten.display())
 
-console("after Upadate :")
+console.log("Upadate with robert:")
 einsten.update('firstname','robert') 
 console.log(einsten)
+

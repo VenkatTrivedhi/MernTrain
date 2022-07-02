@@ -11,34 +11,44 @@ class Employee{
         this.age = age
     }
 
+    static #autoUpdateAge(Dob){
+        
+        const currentDate = new Date()
+        let currentMonth = currentDate.getMonth()
+        let currentYear = currentDate.getFullYear()
+        let birthMonth = Dob.getMonth()
+        let birthYear = Dob.getFullYear()
+
+        let years;
+        let month;
+        let monthProportion
+
+        if (currentMonth < birthMonth) {
+            years = currentYear - birthYear - 1
+            month = 12 - birthMonth - currentMonth
+        }
+
+        if (currentMonth >= birthMonth) {
+            years = currentYear - birthYear
+            month = currentMonth - birthMonth
+        }
+
+        monthProportion = month / 12
+        month = monthProportion.toFixed(1)
+        let age = parseInt(years) + parseFloat(month)
+        return age
+    }
+
     static createAnEmployee(fullname,dob,employeeId,monthlySalary){
         //fullname
         let splitedName = fullname.split(" ")
         let firstName = splitedName[0]
         let lastName = splitedName[1]
 
-        //dob
-        let currentDate = new Date()
-        let currentDay = currentDate.getDate()
-        let currentMonth  =  currentDate.getMonth()
-        let currentYear = currentDate.getFullYear()
-
-        let dayofBirth = dob.getDate()
-        let monthofBirth = dob.getMonth()
-        let yearofBirth = dob.getFullYear()
-        
-        let age;
-        if(monthofBirth>currentMonth){
-            age = currentYear - yearofBirth-1
-        }
-
-        if(monthofBirth<=currentMonth){
-            age = currentYear - yearofBirth        
-        }
-        
-        //monthlysalary
+        let age = this.#autoUpdateAge(dob)
+    
         let annualSalary = monthlySalary*12
-
+    
         return new Employee(firstName,lastName,dob,age,employeeId,monthlySalary,annualSalary)
     }
     
@@ -50,3 +60,4 @@ date.setFullYear(1997)
 
 const venky = Employee.createAnEmployee("Koppisetti Venkatesh",date,1234,100000)
 console.log(venky)
+
