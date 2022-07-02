@@ -35,31 +35,31 @@ class Student {
     }
 
     static #autoUpdateAge(Dob){
+ 
+        let birthMonth = parseInt(Dob.slice(3,5))
+        let birthYear = parseInt(Dob.slice(6,10))
         
         const currentDate = new Date()
         let currentMonth = currentDate.getMonth()
         let currentYear = currentDate.getFullYear()
-        let birthMonth = Dob.getMonth()
-        let birthYear = Dob.getFullYear()
 
-        let years;
-        let month;
-        let monthProportion
+        let yearsofAge;
+        let monthsofAge ;
+        let monthProportionofAge;
 
         if (currentMonth < birthMonth) {
-            years = currentYear - birthYear - 1
-            month = 12 - birthMonth - currentMonth
+            yearsofAge = currentYear - birthYear - 1
+            monthsofAge = 12 + currentMonth -birthMonth
         }
 
         if (currentMonth >= birthMonth) {
-            years = currentYear - birthYear
-            month = currentMonth - birthMonth
+            yearsofAge = currentYear - birthYear
+            monthsofAge = currentMonth - birthMonth
         }
 
-        monthProportion = month / 12
-        month = monthProportion.toFixed(1)
-        let age = parseInt(years) + parseFloat(month)
-
+        monthProportionofAge = monthsofAge / 12
+        monthsofAge = monthProportionofAge.toFixed(1)
+        let age = parseInt(yearsofAge) + parseFloat(monthsofAge)
         return age
     }
 
@@ -263,14 +263,7 @@ class Student {
 }
 
 
-const date = new Date()
-
-date.setDate(04)
-date.setMonth(05)
-date.setFullYear(2000)
-
-
-const einsten = Student.createStudent("albert", "einsten", date, [5, 6, 7, 8, 9], ["A", "B", "A", "B"], 2014, 2018)
+const einsten = Student.createStudent("albert", "einsten",'14/07/1960', [5, 6, 7, 8, 9], ["A", "B", "A", "B"], 2014, 2018)
 console.log("Created object :")
 console.log(einsten)
 

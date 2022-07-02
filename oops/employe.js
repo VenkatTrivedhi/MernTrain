@@ -11,34 +11,36 @@ class Employee{
         this.age = age
     }
 
+ 
     static #autoUpdateAge(Dob){
+ 
+        let birthMonth = parseInt(Dob.slice(3,5))
+        let birthYear = parseInt(Dob.slice(6,10))
         
         const currentDate = new Date()
         let currentMonth = currentDate.getMonth()
         let currentYear = currentDate.getFullYear()
-        let birthMonth = Dob.getMonth()
-        let birthYear = Dob.getFullYear()
 
-        let years;
-        let month;
-        let monthProportion
+        let yearsofAge;
+        let monthsofAge ;
+        let monthProportionofAge;
 
         if (currentMonth < birthMonth) {
-            years = currentYear - birthYear - 1
-            month = 12 - birthMonth - currentMonth
+            yearsofAge = currentYear - birthYear - 1
+            monthsofAge = 12 + currentMonth -birthMonth
         }
 
         if (currentMonth >= birthMonth) {
-            years = currentYear - birthYear
-            month = currentMonth - birthMonth
+            yearsofAge = currentYear - birthYear
+            monthsofAge = currentMonth - birthMonth
         }
 
-        monthProportion = month / 12
-        month = monthProportion.toFixed(1)
-        let age = parseInt(years) + parseFloat(month)
+        monthProportionofAge = monthsofAge / 12
+        monthsofAge = monthProportionofAge.toFixed(1)
+        let age = parseInt(yearsofAge) + parseFloat(monthsofAge)
         return age
     }
-
+    
     static createAnEmployee(fullname,dob,employeeId,monthlySalary){
         //fullname
         let splitedName = fullname.split(" ")
@@ -53,11 +55,7 @@ class Employee{
     }
     
 }
-const date = new Date()
-date.setMonth(05)
-date.setDate(14)
-date.setFullYear(1997)
 
-const venky = Employee.createAnEmployee("Koppisetti Venkatesh",date,1234,100000)
+const venky = Employee.createAnEmployee("Koppisetti Venkatesh","14/05/1997",1234,100000)
 console.log(venky)
 
