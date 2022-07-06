@@ -169,7 +169,7 @@ class Student {
 
   
     update(propertyTobeUpdated,value){
-
+        // restricting chnage in age,finalgrade,finalCgp
         if (propertyTobeUpdated=="age"){
             console.log("age cannont be updated")
             return "age cannont be updated"       
@@ -191,67 +191,66 @@ class Student {
             this.fullname =`${value} ${this.lastname}`
         }
 
-
         if (propertyTobeUpdated=="lastname"){
             this.fullname = `${this.firstname} ${value}`
         }
-        if (propertyTobeUpdated="fullname"){
+        if (propertyTobeUpdated=="fullname"){
             this.firstname = Student.#autoUpdateFirstname(value)
             this.lastname = Student.#autoUpdateLastname(value)
         }
 
         if (propertyTobeUpdated=="dateofBirth"){
-            this.age =this.#autoUpdateAge(value)
+            this.age =Student.#autoUpdateAge(value)
         }
         
         if (propertyTobeUpdated=="semisterGrades"){
-            this.finaleGrade = this.#autoUpdateGrade(value)
+            this.finaleGrade = Student.#autoUpdateGrade(value)
         }
 
         if(propertyTobeUpdated=="semisterCGPs"){
-            this.finaleCGP = this.#autoUpdateCGPA(value)
+            this.finaleCGP = Student.#autoUpdateCGPA(value)
         }
 
         if (propertyTobeUpdated=="yearofEnrollement"){
-            this.numberofYearsofGraduation = passed_year - enrolled_year
+            this.numberofYearsofGraduation = this.yearofPassed - this.yearofEnrollement
         }
         if (propertyTobeUpdated=="yearofPassed"){
-            this.numberofYearsofGraduation = passed_year - enrolled_year
+            this.numberofYearsofGraduation = this.yearofPassed - this.yearofEnrollement
         }
     }
 
     updateFullname(fullname) {
         this.fullname = fullname
-        this.firstname = this.#autoUpdateFirstname(fullname)
-        this.lastname = this.#autoUpdateLastname(fullname)
+        this.firstname = Student.#autoUpdateFirstname(fullname)
+        this.lastname = Student.#autoUpdateLastname(fullname)
     }
     updateFirstname(firstname) {
         this.firstname = firstname
-        this.fullname = this.#autoUpdateFullname(firstname,this.lastname)
+        this.fullname = Student.#autoUpdateFullname(firstname,this.lastname)
     }
     updateLastname(lastname){
         this.lastname = lastname
-        this.fullname = this.#autoUpdateFullname(this.firstname,lastname)
+        this.fullname = Student.#autoUpdateFullname(this.firstname,lastname)
     }
     updateDateofBirth(dateOfBirth){
         this.dateOfBirth = dateOfBirth
-        this.age = this.#autoUpdateAge(dateOfBirth)
+        this.age = Student.#autoUpdateAge(dateOfBirth)
     }
     
     
     updateSemisterGrades(semisterGrades){
         this.semisterGrades = semisterGrades
-        this.finaleGrade = this.#autoUpdateGrade(semisterGrades)
+        this.finaleGrade = Student.#autoUpdateGrade(semisterGrades)
     }
   
     updateSemisterGPAs(semisterCGPs){
         this.semisterCGPs = semisterCGPs
-        this.finaleCGP = this.#autoUpdateCGPA(semisterCGPs)
+        this.finaleCGP = Student.#autoUpdateCGPA(semisterCGPs)
     }
     
     updateYearofEnrollment(yearofEnrollement){
         this.yearofEnrollement = yearofEnrollement
-        this.numberofYearsofGraduation = this.yearofPassed -yearofEnrollement
+        this.numberofYearsofGraduation = this.yearofPassed - yearofEnrollement
     }
     
     updateYearofPassed(yearofPassed){
@@ -266,11 +265,7 @@ class Student {
 const einsten = Student.createStudent("albert", "einsten",'14/07/1960', [5, 6, 7, 8, 9], ["A", "B", "A", "B"], 2014, 2018)
 console.log("Created object :")
 console.log(einsten)
-
+einsten.update("semisterGrades",["A","A","A"])
 console.log('Display all:')
-console.log(einsten.display())
-
-console.log("Upadate with robert:")
-einsten.update('firstname','robert') 
-console.log(einsten)
+einsten.display()
 
