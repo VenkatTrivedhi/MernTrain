@@ -1,58 +1,65 @@
 class User {
     static all_users = [];
     static id = 0;
-    constructor(firstname, lastname, role) {
+    constructor(firstname, lastname, username, role) {
         this.id = ++User.id
         this.firstname = firstname
         this.lastname = lastname
+        this.username = username
         this.role = role
         this.isActive = true
         this.contacts = []
-    }
 
-    createUser(firstname, lastname, role) {
+    }
+    
+    createUser(firstname, lastname, username, role) {
         if (this.isActive==false){
             return [null,"not allowed to createUser"]
         }
         if (this.role != "Admin") { 
             return [null,"only Admin can create a User"]
         }
-        const newUser = new User(firstname, lastname, role)
+        
+        let [indexOfUser,isUsernameExist] = User.#findUser(username)
+        if (isUsernameExist){
+            return [null,"username already exist,try new one"]
+        }
+        const newUser = new User(firstname, lastname, username, role)
         User.all_users.push(newUser)
         return [newUser,"new user created success"]
     }
 
-    #findUser(fullname){
+    static #findUser(username){
         if (this.isActive==false){
-            return "invalid user"
+            return [-1,false]
         }
         for (let index = 0; index < User.all_users.length; index++) {
-            if (fullname ==`${User.all_users[index].firstname} ${User.all_users[index].lastname}`){
+            if (username == User.all_users[index].username){
                 return [index,true]
             }    
         }
-        return [null,false]
+        return [-1,false]
     }
 
-    deleteUser(fullname){
+    deleteUser(username){
         
         if (this.isActive==false){
-            return "invalid user"
+            return [false,"invalid user"]
         }
 
         if (this.isActive==false){
-            return "this account was deleted"
+            return [false,"this account was deleted"]
         }
         if (this.role!="Admin"){
-            return "Only admin can delete user"
+            return [false,"Only admin can delete user"]
         }
 
-        let [indexOfUser,isUserExist] = this.#findUser(fullname)
+        let [indexOfUser,isUserExist] = User.#findUser(username)
         if (!isUserExist){
             return [false,"no user exist that username"]
         }
         if(User.all_users[indexOfUser].isActive==false){
-            this
+            return [false,"already deleted"]
         }
         User.all_users[indexOfUser].isActive = false
         return [true,"User deleted successfully"]
@@ -64,7 +71,7 @@ class User {
         }
 
         if (this.contacts.length == 0) {
-            return [null, false]
+            return [-1, false]
         }
       
         for (let index = 0; index < this.contacts.length; index++) {
@@ -73,14 +80,20 @@ class User {
                 return [index, true]
             }
         }
-        return [null, false]
+        console.log("problem")
+        return [-1, false]
+        
     }
 
     createContact(firstname, lastname) {
         if (this.isActive==false){
             return "invalid user"
         }
+        let [indexOfContact,isContactExist] = this.#findContact(`${firstname} ${lastname}`)
 
+        if (isContactExist){
+            return "choose different name,that name alredy exist"            
+        }
         const newContact = new Contact(firstname, lastname)
         this.contacts.push(newContact)
         return newContact
@@ -91,6 +104,7 @@ class User {
             return "invalid user"
         }
         let [indexOfContact, isContactExist] = this.#findContact(fullname)
+        console.log(indexOfContact)
         if (!isContactExist) {
             return [false, null, "no found contact with that id"]
         }
@@ -108,7 +122,7 @@ class User {
         if (!isContactExist) {
             return [false, null, "no found contact with that id"]
         }
-        console.log(this.contacts[indexOfContact].firstname)
+        console.log("displaying", this.contacts[indexOfContact])
     }
 
     displayContacts() {
@@ -120,11 +134,11 @@ class User {
         }
     }
 
-    deleteContact(fullname) {
+    deleteContact(username) {
         if (this.isActive==false){
             return "invalid user"
         }
-        let [indexOfContact, isContactExist] = this.#findContact(fullname)
+        let [indexOfContact, isContactExist] = this.#findContact(username)
         if (!isContactExist) {
             return [false, null, "no found contact with that id"]
         }
@@ -149,6 +163,7 @@ class Contact {
         this.contactDetails = []
     }
 
+   
     isContactExist(fullname) {
         if (this.isActive==false){
             return false
@@ -167,7 +182,7 @@ class Contact {
 
 
 class ContactDetails {
-    static id = 0;
+    static id = 0;2
     constructor(type, value) {
         this.id = ++ContactDetails.id
         this.type = type
@@ -175,20 +190,20 @@ class ContactDetails {
     }
 }
 
-const Sundar = new User("Sundar","Pichai","Admin")
+const Sundar = new User("Sundar","Pichai","Sundar","Admin")
 console.log(Sundar)
-const [venkatesh,venkyMessage] = Sundar.createUser("koppisetti","venkatesh","User")
-console.log(venkatesh)
+const [venky,venkyMessage] = Sundar.createUser("koppisetti","venkatesh","venky","User")
+console.log(venky)
 
 
-console.log(venkatesh.createContact("Ankith","Raj"))
-console.log(venkatesh.createContactDetails("Ankith Raj","email","ankith@gmail.com"))
-venkatesh.displayContact("Ankith Raj")
-venkatesh.displayContacts()
+console.log(venky.createContact("Ankith","Raj"))
+console.log(venky.createContactDetails("Ankith Raj","email","ankith@gmail.com"))
+venky.displayContact("Ankith Raj")
+venky.displayContacts()
 
-console.log(venkatesh.deleteContact("Ankith Raj"))
+console.log(venky.deleteContact("Ankith Raj"))
 
-const [avisha,Avishamessage] = Sundar.createUser("Avisha","Jain","User")
-
-console.log(venkatesh.deleteUser("Avisha Jain"))
-console.log(Sundar.deleteUser("Avisha Jain"))
+const [avisha,Avishamessage] = Sundar.createUser("Avisha","Jain","avisha","User")
+console.log(avisha)
+console.log(venky.deleteUser("avisha"))
+console.log(Sundar.deleteUser("avisha"))
