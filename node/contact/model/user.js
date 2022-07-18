@@ -154,7 +154,7 @@ class User {
             return "invalid user"
         }
         for (let index = 0; index < this.contacts.length; index++) {
-            this.displayContact(`${this.contacts[index].firstname} ${this.contacts[index].lastname}`)
+            this.displayContact(`${this.contacts[index].firstName} ${this.contacts[index].lastName}`)
         }
     }
 
