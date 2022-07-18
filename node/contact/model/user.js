@@ -1,92 +1,69 @@
 const Contact = require("./contact")
+const Credential = require("./credential")
 const ContactDetails = require("./contactDetails")
+const uuid = require("uuid")
 
 
 class User {
-    static all_users = [];
-    static id = 0;
-    constructor(firstname, lastname, username, role) {
-        this.id = ++User.id
-        this.firstname = firstname
-        this.lastname = lastname
-        this.username = username
+    static allUsers = [];
+    constructor(id,firstname, lastname,credential,role) {
+        this.id = id
+        this.firstName = firstname
+        this.lastName = lastname
+        this.credential = credential
         this.role = role
         this.isActive = true
         this.contacts = []
     }
-    
-    createUser(firstname, lastname, username, role) {
-        if (this.isActive==false){
-            return [null,"not allowed to createUser"]
-        }
-        if (this.role != "Admin") { 
-            return [null,"only Admin can create a User"]
-        }
-        
-        let [indexOfUser,isUsernameExist] = User.#findUser(username)
+    static createAdmin(firstname, lastname, username,password){
+        const id = uuid.v4()
+
+        let [indexOfUser,isUsernameExist] = User.findUser(username)
         if (isUsernameExist){
             return [null,"username already exist,try new one"]
         }
-        const newUser = new User(firstname, lastname, username, role)
-        User.all_users.push(newUser)
+
+        const newCredential = new Credential(username,password)
+        const newUser = new User(id,firstname, lastname,newCredential, "Admin")
+        User.allUsers.push(newUser)
         return [newUser,"new user created success"]
     }
 
-    static #findUser(username){
-        if (this.isActive==false){
-            return [-1,false]
-        }
-        for (let index = 0; index < User.all_users.length; index++) {
-            if (username == User.all_users[index].username){
+    static findUser(username){
+        for (let index = 0; index < User.allUsers.length; index++) {
+            let currentUser = User.allUsers[index]
+            if (username == currentUser.credential.username && currentUser.isActive){
                 return [index,true]
             }    
         }
         return [-1,false]
     }
 
-    deleteUser(username){
-        
-        if (this.isActive==false){
-            return [false,"invalid user"]
+    createUser(firstname, lastname, username, password,role) {
+        let [indexOfUser,isUsernameExist] = User.findUser(username)
+        if (isUsernameExist){
+            return [null,"username already exist,try new one"]
         }
+        const id = uuid.v4()
+        const newCredential = new Credential(username,password)
+        const newUser = new User(id,firstname, lastname,newCredential,role )
+        User.allUsers.push(newUser)
+        return [newUser,"new user created success"]
+    }
 
-        if (this.isActive==false){
-            return [false,"this account was deleted"]
-        }
-        if (this.role!="Admin"){
-            return [false,"Only admin can delete user"]
-        }
-
-        let [indexOfUser,isUserExist] = User.#findUser(username)
-        if (!isUserExist){
-            return [false,"no user exist that username"]
-        }
-        if(User.all_users[indexOfUser].isActive==false){
-            return [false,"already deleted"]
-        }
-        User.all_users[indexOfUser].isActive = false
-        return [true,"User deleted successfully"]
+    deleteUser(){
+        this.isActive = false
     }
 
     updateUser(propertTobeUpdated,value){
         switch(propertTobeUpdated){
-            case("firstname"): this.firstname = value ; return [true,this]
-            case("lastname"): this.lastname = value ; return [true,this]
+            case("firstName"): this.firstName = value ; return [true,this]
+            case("lastName"): this.lastName = value ; return [true,this]
             default: return [false,null]
-
         }
     }
 
-    static findUser(username){
-        for (let index = 0; index < User.all_users.length; index++) {
-            const User = User.all_users[index];
-            return [true,User]  
-        }
-        return [false,null]
-    }
-
-
-    #findContact(fullname) {
+    findContact(fullname) {
         if (this.isActive==false){
             return "invalid user"
         }
@@ -101,15 +78,11 @@ class User {
                 return [index, true]
             }
         }
-        return [-1, false]
-        
+        return [-1, false]    
     }
 
     createContact(firstname, lastname) {
-        if (this.isActive==false){
-            return "invalid user"
-        }
-        let [indexOfContact,isContactExist] = this.#findContact(`${firstname} ${lastname}`)
+        let [indexOfContact,isContactExist] = this.findContact(`${firstname} ${lastname}`)
 
         if (isContactExist){
             return "choose different name,that name alredy exist"            
@@ -119,12 +92,39 @@ class User {
         return newContact
     }
 
+    getContacts(){
+        return this.contacts
+    }
+
+    deleteContact(fullname){
+        if (this.isActive==false){
+            return [false,"Invalid User"]
+        }
+        let [indexOfContact, isContactExist] = this.findContact(fullname)
+        if (!isContactExist) {
+            return [false,"No contact found with the name"]
+        }
+        return this.contacts[indexOfContact].delete()
+      
+    }
+
+    updateContact(fullName,propertTobeUpdated,value){
+        if (this.isActive==false){
+            return [false,null,"Invalid User"]
+        }
+        const [indexOfContact,isContactExist] = this.findContact(fullName)
+        if(!isContactExist){
+            return [false,null,"contact doesn't exist with that name"]
+        }
+        return this.contacts[indexOfContact].update(propertTobeUpdated,value)
+    }
+
     createContactDetails(fullname, type, value) {
         if (this.isActive==false){
             return "invalid user"
         }
 
-        let [indexOfContact, isContactExist] = this.#findContact(fullname)
+        let [indexOfContact, isContactExist] = this.findContact(fullname)
         console.log(indexOfContact)
 
         if (!isContactExist) {
@@ -142,7 +142,7 @@ class User {
         if (this.isActive==false){
            return "invalid user"
         }
-        let [indexOfContact, isContactExist] = this.#findContact(fullname)
+        let [indexOfContact, isContactExist] = this.findContact(fullname)
         if (!isContactExist) {
             return [false, null, "no found contact with that id"]
         }
@@ -158,21 +158,6 @@ class User {
         }
     }
 
-    deleteContact(username){
-        if (this.isActive==false){
-            return "invalid user"
-        }
-        let [indexOfContact, isContactExist] = this.#findContact(username)
-        if (!isContactExist) {
-            return [false, null, "no found contact with that id"]
-        }
-        let isdeleted = this.contacts[indexOfContact].deleteContact()
-
-        if(isdeleted){
-            return [true, this.contacts[indexOfContact], "contact deleted successfully"]
-        }
-        return[false,null,"that contact was already deleted"]
-    }
 }
 
 
