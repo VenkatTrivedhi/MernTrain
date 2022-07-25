@@ -1,10 +1,10 @@
 class User {
-    static all_users = [];
+    static allUsers = [];
     static id = 0;
     constructor(firstname, lastname, username, role) {
         this.id = ++User.id
-        this.firstname = firstname
-        this.lastname = lastname
+        this.firstName = firstname
+        this.lastName = lastname
         this.username = username
         this.role = role
         this.isActive = true
@@ -20,21 +20,21 @@ class User {
             return [null,"only Admin can create a User"]
         }
         
-        let [indexOfUser,isUsernameExist] = User.#findUser(username)
+        let [indexOfUser,isUsernameExist] = User.findUser(username)
         if (isUsernameExist){
             return [null,"username already exist,try new one"]
         }
         const newUser = new User(firstname, lastname, username, role)
-        User.all_users.push(newUser)
+        User.allUsers.push(newUser)
         return [newUser,"new user created success"]
     }
 
-    static #findUser(username){
+    static findUser(username){
         if (this.isActive==false){
             return [-1,false]
         }
-        for (let index = 0; index < User.all_users.length; index++) {
-            if (username == User.all_users[index].username){
+        for (let index = 0; index < User.allUsers.length; index++) {
+            if (username == User.allUsers[index].username){
                 return [index,true]
             }    
         }
@@ -61,7 +61,7 @@ class User {
         if(User.all_users[indexOfUser].isActive==false){
             return [false,"already deleted"]
         }
-        User.all_users[indexOfUser].isActive = false
+        User.allUsers[indexOfUser].isActive = false
         return [true,"User deleted successfully"]
     }
 
@@ -182,7 +182,7 @@ class Contact {
 
 
 class ContactDetails {
-    static id = 0;2
+    static id = 0;
     constructor(type, value) {
         this.id = ++ContactDetails.id
         this.type = type
