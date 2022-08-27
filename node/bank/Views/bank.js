@@ -9,11 +9,10 @@ class Bank {
         this.bankAbbrevation = bankAbbrevation
     }
 
-    static createBank(bankName, bankAbbrevation) {
+    createBank(bankName, bankAbbrevation) {
         let [indexOfBank, isBankexist, bankproperty] = Bank.#findBank(bankName, bankAbbrevation)
         if(isBankexist) {
-            return [false,null,`${bankproperty} already exist`]
-            
+            return [false,null,`${bankproperty} already exist`]         
         }
         const newBank = new Bank(bankName, bankAbbrevation)
         Bank.allBanks.push(newBank)

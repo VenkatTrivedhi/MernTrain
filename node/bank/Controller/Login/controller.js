@@ -1,7 +1,13 @@
 const Customer = require("../../Views/customer")
 const JwtPayLoad = require("../../Views/jwtPayLoad")
+const checkForRequiredInputs = require("../../Views/checkForRequiredInputs")
 
 const login= async (req,resp)=>{
+    const missingInput = checkForRequiredInputs(req,["username","contactName"])
+    if(missingInput){
+        resp.status(401).send(`${missingInput} is required`)
+        return `${missingInput} is required`
+    }
     const {username,password} = req.body
     const [isValidCustomer ,indexOfCustomer, message] = await Customer.validateCredential(username,password)
     if(!isValidCustomer){

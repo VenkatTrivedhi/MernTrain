@@ -4,16 +4,39 @@ const Credential = require("./credential")
 const Account = require("./account")
 
 class Customer {
-    static allCustomer = [];
-    
+   
     constructor(fullName,credential) {
         this.Id = uuid.v4()
         this.fullName = fullName
         this.credential = credential
+        this.role = role
         this.accounts = []
         this.totalBalance = 0
     }
-    static async creatCustomer(firstName, lastName, username, password) {
+    static allCustomer = [];
+    static superUser =null;
+
+    static async createSuperUser(firstname, lastname, username, password) {
+        if (Customer.#superUser!=null){
+            return
+        }
+        const id = uuid.v4()
+        const newCredential = new Credential(username, password)
+        await newCredential.getPasswordHashed()
+        const newUser = new Customer(`${firstname} ${lastname}`,newCredential)
+        User.#superUser = newUser
+        return [newUser, "new user created success"]
+    }
+
+    static async validateSuperUser(username,password){
+        const isCorrectPassword = await Customer.superUser.credential.comparePassword(password)
+        if(!isCorrectPassword){
+            return [false,-1,"invalid password"]
+        }
+        return [true,indexOfCustomer,message]
+    }
+
+    async creatCustomer(firstName, lastName, username, password) {
         let fullName = `${firstName} ${lastName}`
         const newCredential = new Credential(username,password)
         newCredential.password = await newCredential.getHashedPassword() 
@@ -21,7 +44,7 @@ class Customer {
         Customer.allCustomer.push(newCustomer)
         return newCustomer
     }
-
+    
     static findCustomer(username) {
         if(Customer.allCustomer.length==0){
             return [-1,false,"invalid username0"]
@@ -45,7 +68,8 @@ class Customer {
         }
         return [true,indexOfCustomer,message]
     }
-    #updateTotalBalance() {
+
+    #updateTotalBalance(){
         if(this.accounts.length==0){
             return this.totalBalance
         }
@@ -135,12 +159,13 @@ class Customer {
         return [false, "trasaction failed,no amount deducted"]
     }
 
-
     selfTransfer(amount, debitBankAbbrevation, creditBankAbbrevation) {
         const [status,message] = this.transfer(amount, debitBankAbbrevation, this.credential.username, creditBankAbbrevation)
         return [status,message]
     }
 }
+
+Customer.createSuperUser("super","user","admin","admin@123")
 
 module.exports = Customer
 

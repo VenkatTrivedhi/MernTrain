@@ -32,10 +32,17 @@ class Question{
         return [true,newQuestion,"Question created successfully"]
     }
 
-    addOptions(option){
-        this.options.push(option)
-        return true
+    updateQuestion(propertTobeUpdated,value){
+        switch(propertTobeUpdated){
+            case("selectedAnswer"):{
+                this.selectedAnswer = value
+                return [true,"question updated successfully"]
+            }
+            default:return [false]
+        }
     }
+
+
     
 }
 

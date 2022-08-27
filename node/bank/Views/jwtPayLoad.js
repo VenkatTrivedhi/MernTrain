@@ -5,6 +5,7 @@ class JwtPayLoad{
     constructor(customer){
         this.username = customer.credential.username
         this.fullName =  customer.fullName
+        this.role = customer
     }
 
     createToken(){
@@ -23,11 +24,28 @@ class JwtPayLoad{
             return [false,null]
         }
         const Payload = JwtPayLoad.verifyToken(myToken)
-        if(!Payload.username){
+        if(!Payload.username==){
             resp.status(403).send("invalid customer")
             return [false,null]
         }
         return [true,Payload]
+    }
+
+    static isValidAdmin(req,resp){
+        const myToken = req.cookies["myBankToken"]
+        if(!myToken){
+            resp.status(401).send("login required")
+            return [false,null]
+        }
+        const Payload = JwtPayLoad.verifyToken(myToken)
+        if(Payload.role!="Admin"){
+            resp.status(403).send("invalid customer")
+            return [false,null]
+        }
+        return [true,Payload]
+    }
+    static isValidUser(){
+        //it will have use
     }
 }
 

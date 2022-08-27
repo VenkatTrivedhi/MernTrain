@@ -39,7 +39,7 @@ app.delete("/api/v1/deleteTest/:technology", (req, resp) => deleteTest(req, resp
 
 //Question
 app.put("/api/v1/createQuestion", (req, resp) => createQuestion(req, resp))
-app.put("/api/v1/updateQuestion", (req, resp) => updateQuestion(req, resp))
+app.put("/api/v1/updateQuestion/:details", (req, resp) => updateQuestion(req, resp))
 app.delete("/api/v1/deleteQuestion", (req, resp) => deleteQuestion(req, resp))
 
 app.post("/api/v1/createContactDetails/:username/:contactName", (req, resp) => createContactDetails(req, resp))

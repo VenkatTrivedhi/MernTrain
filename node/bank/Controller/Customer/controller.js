@@ -1,4 +1,5 @@
 const Customer = require("../../Views/customer")
+const checkForRequiredInputs = require("../../Views/checkForRequiredInputs")
 
 const  creatCustomer= async (req,resp)=>{   
     const {firstName,lastName,username,password} = req.body

@@ -1,8 +1,20 @@
 const Bank = require("../../Views/bank")
 const JwtPayLoad = require("../../Views/jwtPayLoad")
 const Customer = require("../../Views/customer")
+const checkForRequiredInputs = require("../../Views/checkForRequiredInputs")
 
-const createBank=(req,resp)=>{
+const createBank=(req,resp)=>{ 
+    const [isAdmin,Payload,indexOfAdmin] = JwtPayLoad.isValidAdmin(req, resp)
+    if (!isAdmin) {
+        return "unauthorized access"
+    }
+    const missingInput = checkForRequiredInputs(req,["bankName","bankAbbrevation"])
+    
+    if(missingInput){
+        resp.status(401).send(`${missingInput} is required`)
+        return `${missingInput} is required`
+    }
+
     const {bankName,bankAbbrevation} =  req.body
     const [isCreated,newBank,message]=Bank.createBank(bankName,bankAbbrevation)
     if(!isCreated){

@@ -1,5 +1,6 @@
 const JwtPayLoad = require("../../Views/jwtPayLoad")
 const Customer = require("../../Views/customer")
+const checkForRequiredInputs = require("../../Views/checkForRequiredInputs")
 
 const withdraw = (req,resp)=>{
     const [isValid,Payload] = JwtPayLoad.isValidCustomer(req,resp)

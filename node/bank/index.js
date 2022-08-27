@@ -11,6 +11,7 @@ const creatCustomer = require("./Controller/Customer/controller")
 const {createBank, getAllBanks} = require("./Controller/Bank/controller")
 const {creatAccount,getAllAccountsOfCustomer}=require("./Controller/Account/controller")
 const {withdraw,deposit,transfer,selfTransfer} = require("./Controller/Transactions/controller")
+const Adminlogin = require("./Controller/Admin/controller")
 
 
 const app = express()
@@ -19,6 +20,7 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(cookieParser())
 
+app.post("/api/v1/adminlogin",(req,resp)=>Adminlogin(req,resp))
 app.post("/api/v1/login",(req,resp)=>login(req,resp))
 app.post("/api/v1/logout",(req,resp)=>logout(req,resp))
 

@@ -11,7 +11,7 @@ class Test {
         this.outOffScore = 0
         this.Score = 0
         this.isAttempted = false 
-        this.isActive = true
+        this.isActive = true 
     }
     static allTests = []
 
@@ -106,14 +106,32 @@ class Test {
         return -1
     }
 
+    makeCopyOfTest(){
+        let copyOfTest = []
+        let copyOfQuestions = []
+        for (let index = 0; index < this.questions.length; index++) {
+            copyOfQuestions.push(Object.assign({},this.questions[index]))
+        }
+        this.questions = copyOfQuestions
+        copyOfTest = Object.assign({},this)
+        return copyOfTest
+    }
+
     addTestToUsers(){
         for (let index = 0; index < User.allUsers.length; index++) {
             if(User.allUsers[index].isTechnologyExist(this.technology)){
-                let copyofTest = []
-                copyofTest.concat([this])
-                User.allUsers[index].Test.push[copyofTest[0]]
+        
+                User.allUsers[index].Test.push(this.makeCopyOfTest())
             }    
         }
+    }
+
+    updateQuestion(details,propertTobeUpdated,value){
+        const indexOfQuestion = this.findActiveQuestion(details)
+        if(indexOfQuestion<0){
+            return [false, "no question"]
+        }
+        return this.questions.updateQuestion(propertTobeUpdated,value)
     }
 
 }

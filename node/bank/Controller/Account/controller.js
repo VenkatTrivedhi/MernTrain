@@ -1,7 +1,15 @@
 const JwtPayLoad = require("../../Views/jwtPayLoad")
 const Customer = require("../../Views/customer")
+const checkForRequiredInputs = require("../../Views/checkForRequiredInputs")
 
 const creatAccount = (req,resp)=>{
+    const missingInput = checkForRequiredInputs(req,["type","value"],["username","contactName"])
+    
+    if(missingInput){
+        resp.status(401).send(`${missingInput} is required`)
+        return `${missingInput} is required`
+    }
+
     const [isValid,Payload] = JwtPayLoad.isValidCustomer(req,resp)
     if(!isValid){
         return
