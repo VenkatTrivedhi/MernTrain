@@ -1,12 +1,22 @@
 const User = require("../../Views/user")
 const JwtPayload = require("../..//Views/JwtPayload")
+const checkForRequiredInputs = require("../../Views/checkForRequiredInputs")
+const paginater = require("../../Views/paginater")
 
 const createContact = (req,resp)=>{
+    const {firstname,lastname} = req.body
+    const missingInput = checkForRequiredInputs(req,["firstname","lastname"],["username"])
+    
+    if(missingInput){
+        resp.status(401).send(`${missingInput} is required`)
+        return `${missingInput} is required`
+    }
+
     const [isSelfUser,Payload,indexOfSelfUser] = JwtPayload.isValidSelfUser(req,resp)
     if(!isSelfUser){
         return "unauthorized access"
     }
-    const {username,firstname,lastname} = req.body
+
     const [isContactCreated,newContact,message] = User.allUsers[indexOfSelfUser].createContact(firstname,lastname)
     if(!isContactCreated){
         resp.status(500).send(message)
@@ -17,22 +27,42 @@ const createContact = (req,resp)=>{
 }
 
 const getAllContacts = (req,resp) => {
+    console.log("controller hitted")
+    const missingInput = checkForRequiredInputs(req,requiredBodyInput=[] ,requiredParamsInput=["username"])
+    if(missingInput){
+   
+        resp.status(401).send(`${missingInput} is required`)
+        return `${missingInput} is required`
+    }
     const [isSelfUser,Payload,indexOfSelfUser] = JwtPayload.isValidSelfUser(req,resp)
     if(!isSelfUser){
+      
         return "unauthorized access"
     }
-    resp.status(200).send(User.allUsers[indexOfSelfUser].contacts)
+
+    const {limit,page} =  req.query
+    let currentPage = paginater(User.allUsers[indexOfSelfUser].contacts,limit,page)
+    resp.status(200).send(currentPage)
     return "got all contacts successfully"
 }
 
 const updateContact = (req,resp) => {
+   
+    const missingInput = checkForRequiredInputs(req,["propertyTobeUpdated","value"],["username","contactName"])
+    
+    if(missingInput){
+        resp.status(401).send(`${missingInput} is required`)
+        return `${missingInput} is required`
+    }
+
     const [isSelfUser,Payload,indexOfSelfUser] = JwtPayload.isValidSelfUser(req,resp)
     if(!isSelfUser){
         return "unauthorized access"
     }
-    const {username,contactName,propertTobeUpdated,value} = req.body
+    const {propertyTobeUpdated,value} = req.body
+    const contactName = req.params.contactName
 
-    const [isUpdated,UpdatedContact,message] = User.allUsers[indexOfSelfUser].updateContact(contactName,propertTobeUpdated,value)
+    const [isUpdated,UpdatedContact,message] = User.allUsers[indexOfSelfUser].updateContact(contactName,propertyTobeUpdated,value)
     if(!isUpdated){
         resp.status(500).send(message)
         return message
@@ -42,12 +72,19 @@ const updateContact = (req,resp) => {
 }
 
 const deleteContact = (req,resp) => { 
+
+    const missingInput = checkForRequiredInputs(req,requiredBodyInput=[] ,requiredParamsInput=["username","contactName"])
+    
+    if(missingInput){
+        resp.status(401).send(`${missingInput} is required`)
+        return `${missingInput} is required`
+    }
+
     const [isSelfUser,Payload,indexOfSelfUser] = JwtPayload.isValidSelfUser(req,resp)
     if(!isSelfUser){
         return "unauthorized access"
     }
-    const {username,contactName} = req.body
-   
+    const contactName = req.params.contactName
     const [isDeleted,message] = User.allUsers[indexOfSelfUser].deleteContact(contactName)
     if(!isDeleted){
         resp.status(500).send(message)

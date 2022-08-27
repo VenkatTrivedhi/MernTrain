@@ -3,6 +3,7 @@ const User = require("./user")
 
 class JwtPayload{
     static secret = "123abc"
+
     constructor(user){
         this.username = user.credential.username
         this.role = user.role
@@ -30,12 +31,13 @@ class JwtPayload{
             resp.status(403).send("Admin only have access")
             return [false,null,-1]
         }
-        const [indexOfUser, isUserExist] = User.findUser(newPayload.username)
+        const [indexOfAdmin, isUserExist] = User.findUser(newPayload.username) 
         if(!isUserExist){
-            resp.status(403).send("User not permitted")
+            resp.clearCookie("mytoken")
+            resp.status(401).send("login required")
             return [false,null,-1]
         }
-        return [true,newPayload,indexOfUser]
+        return [true,newPayload,indexOfAdmin]
     }
 
     static isValidAdminOrSelf(req,resp){
@@ -45,16 +47,17 @@ class JwtPayload{
             return [false,null,-1]
         }
         const newPayload = JwtPayload.verifyCookies(myToken)
-        const username = req.body.username
+
+        const username = req.params.username
         let isAdminOrSelf = newPayload.role=="Admin"|| newPayload.username==username
         if(!isAdminOrSelf){
             resp.status(403).send("User not permitted")
             return [false,null,-1]
         }
         // checking whether authenticated user deleted
-        const [indexOfUser, isUserExist] = User.findUser(newPayload.username)
+        const [indexOfUser, isUserExist] = User.findUser(username)
         if(!isUserExist){
-            resp.status(403).send("User not permitted")
+            resp.status(403).send("User does not exist")
             return [false,null,-1]
         }
         return [true,newPayload,indexOfUser]
@@ -78,26 +81,48 @@ class JwtPayload{
         }
         return [true,newPayload,indexOfUser]
     }
-
-    static isValidSelfUser(req,resp){
+    static loggedInUser(req,resp){
         const myToken = req.cookies["mytoken"]
         if(!myToken){
-            resp.status(401).send("login required")
+            resp.status(200).send(null)
             return [false,null,-1]
         }
         const newPayload = JwtPayload.verifyCookies(myToken)
         const [indexOfUser, isUserExist] = User.findUser(newPayload.username)
         if(!isUserExist){
-            resp.status(403).send("User not permited")
+            resp.status(200).send(null)
             return [false,null,-1]
         }
-        if(newPayload.username!=req.body.username){
-            resp.status(403).send("User not permited")
+        if(User.allUsers[indexOfUser].isActive!=true){
+            resp.status(200).send(null)
             return [false,null,-1]
         }
         return [true,newPayload,indexOfUser]
     }
 
+    static isValidSelfUser(req,resp){
+        const myToken = req.cookies["mytoken"]
+        
+        if(!myToken){
+            resp.status(401).send("login required")
+            return [false,null,-1]
+        }
+
+        const newPayload = JwtPayload.verifyCookies(myToken)
+
+        if(newPayload.username!=req.params["username"]){
+            resp.status(403).send("User not permited")
+            return [false,null,-1]
+        }
+        
+        const [indexOfUser, isUserExist] = User.findUser(req.params["username"])
+
+        if(!isUserExist){
+            resp.status(403).send("User not permited")
+            return [false,null,-1]
+        }
+        return [true,newPayload,indexOfUser]
+    }
 }
 
 module.exports = JwtPayload

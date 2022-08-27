@@ -9,7 +9,7 @@ class ContactDetails {
         this.isActive = true
     }
 
-/*   update(propertTobeUpdated,value){
+    update(propertTobeUpdated,value){
         switch(propertTobeUpdated){
             case("type"):this.type = value; return [true,this];
             case("value"):this.value = value; return [true,this];
@@ -21,7 +21,6 @@ class ContactDetails {
         this.isActive=false
         return true
     }
-*/
     
 }
 
