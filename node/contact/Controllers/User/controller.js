@@ -76,9 +76,11 @@ const updateUser = (req, resp) => {
         resp.status(500).send("user not updated")
         return "internal error"
     }
+
     resp.status(200).send(UpdatedUser)
     return "updated successfully"
 }
+
 const deleteUser = (req, resp) => {
 
     const [isAdminOrSelf,Payload,indexOfUserTobeUpdated] = JwtPayload.isValidAdminOrSelf(req, resp)

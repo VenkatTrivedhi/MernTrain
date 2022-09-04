@@ -22,13 +22,15 @@ class DatabaseMongoose {
             })
     }
 
+    
+
     async insertBook(book) {
         try {
             let newRecord = await BookModel.create(book)
             return newRecord
         }
         catch (e) {
-            console.log(e.message)
+            console.log()
         }
     }
 
@@ -61,13 +63,18 @@ class DatabaseMongoose {
             let newRecord = await CredentialModel.create(credential)
             return newRecord
         }
-        catch (e) {
-            console.log(e.message)
+        catch (err) {
+            console.log(DatabaseMongoose.hadleError(err))   
         }
     }
 
     async getCredential(username) {
         let record = await CredentialModel.where("username").equals(username).populate("_id")
+        return record 
+    }
+
+    async replaceCredential(username) {
+        let record = await CredentialModel.updateOne({username:"hhjvv"},{username:"new"})
         return record 
     }
 

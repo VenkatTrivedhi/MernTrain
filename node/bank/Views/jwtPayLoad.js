@@ -24,7 +24,7 @@ class JwtPayLoad{
             return [false,null]
         }
         const Payload = JwtPayLoad.verifyToken(myToken)
-        if(!Payload.username==){
+        if(!Payload.username==req.params.username){
             resp.status(403).send("invalid customer")
             return [false,null]
         }
