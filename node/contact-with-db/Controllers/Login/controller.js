@@ -6,29 +6,30 @@ const login= async (req,resp) => {
     const missingInput = checkForRequiredInputs(req,["username","password"])
     
     if(missingInput){
-        resp.status(401).send(`${missingInput} is required`)
+        resp.status(401).send({"message":`${missingInput} is required`})
         return
     }
 
     const username = req.body.username
     const password = req.body.password
-    const [isValid,indexOfUser,message] = await User.validateCredential(username,password)
+    const [isValid,user,message] = await User.validateCredential(username,password)
     if(!isValid){
-        resp.status(401).send(message)
+        resp.status(401).send({"message":message})
         return
     }
-    const newPayload = new JwtPayload(User.allUsers[indexOfUser])
+    const newPayload = new JwtPayload(user)
     const newToken =  newPayload.createtoken()
     resp.cookie("mytoken",newToken)
-    resp.status(200).send(newPayload)
+    resp.status(200).send({"data":newPayload})
 }
 
-const loggedInUser= (req,resp) => {
-    const  [isLoggedInUser,Payload,indexOfUser] = JwtPayload.loggedInUser(req,resp)
+
+const loggedInUser= async (req,resp) => {
+    const  [isLoggedInUser,Payload,user] = await JwtPayload.loggedInUser(req,resp)
     if(!isLoggedInUser){
-        resp.status(200).send(null)
+        return
     }
-    resp.status(200).send(Payload)
+    resp.status(200).send({"data":Payload,"message":"user authenticated"})
 }
 
 module.exports = {login,loggedInUser}

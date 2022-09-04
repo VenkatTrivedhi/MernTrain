@@ -20,108 +20,112 @@ class JwtPayload{
         return Payload
     }
 
-    static isValidAdmin(req,resp){
+    static async isValidAdmin(req,resp){
         const myToken = req.cookies["mytoken"]
         if(!myToken){
-            resp.status(401).send("login required")
-            return [false,null,-1]
+            resp.status(401).send({"message":"login required"})
+            return [false,null,null]
         }
         const newPayload = JwtPayload.verifyCookies(myToken)
         if(newPayload.role!="Admin"){
-            resp.status(403).send("Admin only have access")
-            return [false,null,-1]
+            resp.status(403).send({"message":"Admin only have access"})
+            return [false,null,null]
         }
-        const [indexOfAdmin, isUserExist] = User.findUser(newPayload.username) 
-        if(!isUserExist){
+        const [user, message] = await User.findUser(newPayload.username) 
+        if(!user){
             resp.clearCookie("mytoken")
-            resp.status(401).send("login required")
-            return [false,null,-1]
+            resp.status(401).send({"message":"authenticated user is deleted"})
+            return [false,null,null]
         }
-        return [true,newPayload,indexOfAdmin]
+        return [true,newPayload,user]
     }
 
-    static isValidAdminOrSelf(req,resp){
+    static async isValidAdminOrSelf(req,resp){
         const myToken = req.cookies["mytoken"]
         if(!myToken){
-            resp.status(401).send("login required")
-            return [false,null,-1]
+            resp.status(401).send({"message":"login required"})
+            return [false,null,null]
         }
         const newPayload = JwtPayload.verifyCookies(myToken)
-
         const username = req.params.username
+
         let isAdminOrSelf = newPayload.role=="Admin"|| newPayload.username==username
         if(!isAdminOrSelf){
-            resp.status(403).send("User not permitted")
-            return [false,null,-1]
+            resp.status(403).send({"message":"User not permitted"})
+            return [false,null,null]
         }
-        // checking whether authenticated user deleted
-        const [indexOfUser, isUserExist] = User.findUser(username)
-        if(!isUserExist){
-            resp.status(403).send("User does not exist")
-            return [false,null,-1]
+        const [autheenticatedUser, messageOfauthenticated] = await User.findUser(newPayload.username)
+        if(!autheenticatedUser){
+            resp.status(403).send({"message":"authenticated user is deleted"})
+            return [false,null,null]
         }
-        return [true,newPayload,indexOfUser]
+        const [user, message] = await User.findUser(username)
+        if(!user){
+            resp.status(403).send({"message":"User does not exist"})
+            return [false,null,null]
+        }
+        return [true,newPayload,user]
     }
 
-    static isValidUser(req,resp){
+    static async isValidUser(req,resp){
         const myToken = req.cookies["mytoken"]
         if(!myToken){
-            resp.status(401).send("login required")
-            return [false,null,-1]
+            resp.status(401).send({"message":"login required"})
+            return [false,null,null]
         }
         const newPayload = JwtPayload.verifyCookies(myToken)
-        const [indexOfUser, isUserExist] = User.findUser(newPayload.username)
-        if(!isUserExist){
-            resp.status(403).send("user not allowed")
-            return [false,null,-1]
+        const [user, message] = await User.findUser(newPayload.username)
+        if(!user){
+            resp.status(403).send({"message":"authenticated user is deleted"})
+            return [false,null,null]
         }
-        if(User.allUsers[indexOfUser].isActive!=true){
-            resp.status(403).send("user not allowed")
-            return [false,null,-1]
+        if(user.isActive!=true){
+            resp.status(403).send({"message":"authenticated user deleted"})
+            return [false,null,null]
         }
-        return [true,newPayload,indexOfUser]
+        return [true,newPayload,user]
     }
-    static loggedInUser(req,resp){
+    static async loggedInUser(req,resp){
         const myToken = req.cookies["mytoken"]
         if(!myToken){
-            resp.status(200).send(null)
-            return [false,null,-1]
+            resp.status(200).send({"data":null,"message":"login required"})
+            return [false,null,null]
         }
         const newPayload = JwtPayload.verifyCookies(myToken)
-        const [indexOfUser, isUserExist] = User.findUser(newPayload.username)
-        if(!isUserExist){
-            resp.status(200).send(null)
-            return [false,null,-1]
+        const [user, message] = await User.findUser(newPayload.username)
+        if(!user){
+            resp.status(200).send({"data":null,"message":"authenticated is not valid anymore"})
+            return [false,null,null]
         }
-        if(User.allUsers[indexOfUser].isActive!=true){
-            resp.status(200).send(null)
-            return [false,null,-1]
+        if(user.isActive!=true){
+            resp.status(200).send({"data":null,"message":"authenticated  user is not active"})
+            return [false,null,null]
         }
-        return [true,newPayload,indexOfUser]
+        return [true,newPayload,user]
     }
 
-    static isValidSelfUser(req,resp){
+    static async isValidSelfUser(req,resp){
         const myToken = req.cookies["mytoken"]
         
         if(!myToken){
-            resp.status(401).send("login required")
-            return [false,null,-1]
+            resp.status(401).send({"message":"login required"})
+            return [false,null,null]
         }
 
         const newPayload = JwtPayload.verifyCookies(myToken)
 
         if(newPayload.username!=req.params["username"]){
-            resp.status(403).send("User not permited")
-            return [false,null,-1]
+            resp.status(403).send({"message":"User not permited"})
+            return [false,null,null]
         }
         
-        const [indexOfUser, isUserExist] = User.findUser(req.params["username"])
+        const [user, message] = await User.findUser(req.params["username"])
 
-        if(!isUserExist){
-            resp.status(403).send("User not permited")
-            return [false,null,-1]
+        if(!user){
+            resp.status(403).send({"message":"authenticated is deleted"})
+            return [false,null,null]
         }
-        return [true,newPayload,indexOfUser]
+        return [true,newPayload,user]
     }
 }
 

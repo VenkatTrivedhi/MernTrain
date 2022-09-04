@@ -13,6 +13,7 @@ const logout = require("./Controllers/Logout/controller")
 const { createUser, getAllUser, getUser ,updateUser, deleteUser } = require("./Controllers/User/controller")
 const { createContact, getAllContacts , updateContact, deleteContact } = require("./Controllers/Contact/controller")
 const {createContactDetails,updateContactDetails,deleteContactDetails} = require("./Controllers/ContactDetails/controller")
+const {roles,limitOfPage} = require("./Controllers/Input/InputChoice")
 
 const app = express()
 
@@ -20,26 +21,30 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(cookieParser())
 
+//input
+app.get("/api/v1/roles", async (req, resp) => await roles(req, resp))
+app.get("/api/v1/limitOfPage",async (req, resp) => await limitOfPage(req, resp))
+
 //login/logout
 app.post("/api/v1/login", async (req, resp) => await login(req, resp))
-app.get("/api/v1/loggedInUser", (req, resp) => loggedInUser(req, resp))
+app.get("/api/v1/loggedInUser",async (req, resp) => await loggedInUser(req, resp))
 app.post("/api/v1/logout", (req, resp) => logout(req, resp))
 //user
 app.post("/api/v1/createUser", async (req, resp) => await createUser(req, resp))
-app.get("/api/v1/getAllUser", (req, resp) => getAllUser(req, resp))
-app.get("/api/v1/getUser/:username", (req, resp) => getUser(req, resp))
-app.put("/api/v1/updateUser/:username", (req, resp) => updateUser(req, resp))
-app.delete("/api/v1/deleteUser/:username", (req, resp) => deleteUser(req, resp))
+app.get("/api/v1/getAllUser", async (req, resp) => await getAllUser(req, resp))
+app.get("/api/v1/getUser/:username", async(req, resp) => await getUser(req, resp))
+app.put("/api/v1/updateUser/:username", async(req, resp) => await updateUser(req, resp))
+app.delete("/api/v1/deleteUser/:username", async(req, resp) => await deleteUser(req, resp))
 //contact
-app.post("/api/v1/createContact/:username", (req, resp) => createContact(req, resp))
-app.get("/api/v1/getAllContacts/:username", (req, resp) => getAllContacts(req, resp))
+app.post("/api/v1/createContact/:username", async(req, resp) => await createContact(req, resp))
+app.get("/api/v1/getAllContacts/:username", async(req, resp) => await getAllContacts(req, resp))
 
-app.put("/api/v1/updateContact/:username/:contactName", (req, resp) => updateContact(req, resp))
-app.delete("/api/v1/deleteContact/:username/:contactName", (req, resp) => deleteContact(req, resp))
+app.put("/api/v1/updateContact/:username/:contactName", async(req, resp) => await updateContact(req, resp))
+app.delete("/api/v1/deleteContact/:username/:contactName", async(req, resp) => await deleteContact(req, resp))
 //contactDetails
-app.post("/api/v1/createContactDetails/:username/:contactName", (req, resp) => createContactDetails(req, resp))
-app.put("/api/v1/updateContactDetails/:username/:contactName/:type", (req, resp) => updateContactDetails(req, resp))
-app.delete("/api/v1/deleteContactDetails/:username/:contactName/:type", (req, resp) => deleteContactDetails(req, resp))
+app.post("/api/v1/createContactDetails/:username/:contactName", async(req, resp) => await createContactDetails(req, resp))
+app.put("/api/v1/updateContactDetails/:username/:contactName/:type", async(req, resp) => await updateContactDetails(req, resp))
+app.delete("/api/v1/deleteContactDetails/:username/:contactName/:type", async(req, resp) => await deleteContactDetails(req, resp))
 
 //server
 app.listen(8000, () => {

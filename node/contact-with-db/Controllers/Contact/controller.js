@@ -3,94 +3,92 @@ const JwtPayload = require("../..//Views/JwtPayload")
 const checkForRequiredInputs = require("../../Views/checkForRequiredInputs")
 const paginater = require("../../Views/paginater")
 
-const createContact = (req,resp)=>{
+const createContact = async (req,resp)=>{
     const {firstname,lastname} = req.body
     const missingInput = checkForRequiredInputs(req,["firstname","lastname"],["username"])
     
     if(missingInput){
-        resp.status(401).send(`${missingInput} is required`)
+        resp.status(401).send({"message":`${missingInput} is required`})
         return `${missingInput} is required`
     }
 
-    const [isSelfUser,Payload,indexOfSelfUser] = JwtPayload.isValidSelfUser(req,resp)
-    if(!isSelfUser){
+    const [isSelfuser,selfPayload,selfUser] = await JwtPayload.isValidSelfUser(req,resp)
+    if(!isSelfuser){
         return "unauthorized access"
     }
 
-    const [isContactCreated,newContact,message] = User.allUsers[indexOfSelfUser].createContact(firstname,lastname)
+    const [isContactCreated,newContact,message] = await selfUser.createContact(firstname,lastname)
     if(!isContactCreated){
-        resp.status(500).send(message)
+        resp.status(500).send({"data":newContact,"message":message})
         return message
     }
-    resp.status(201).send(newContact)
+    resp.status(201).send({"data":newContact,"message":message})
     return message
 }
 
-const getAllContacts = (req,resp) => {
+const getAllContacts = async (req,resp) => {
     console.log("controller hitted")
     const missingInput = checkForRequiredInputs(req,requiredBodyInput=[] ,requiredParamsInput=["username"])
     if(missingInput){
    
-        resp.status(401).send(`${missingInput} is required`)
+        resp.status(401).send({"message":`${missingInput} is required`})
         return `${missingInput} is required`
     }
-    const [isSelfUser,Payload,indexOfSelfUser] = JwtPayload.isValidSelfUser(req,resp)
-    if(!isSelfUser){
-      
+    const [isSelfuser,selfPayload,selfUser] = await JwtPayload.isValidSelfUser(req,resp)
+    if(!isSelfuser){
         return "unauthorized access"
     }
-
     const {limit,page} =  req.query
-    let currentPage = paginater(User.allUsers[indexOfSelfUser].contacts,limit,page)
-    resp.status(200).send(currentPage)
+    const [length,currentPage] = await selfUser.getAllContactObjects(limit,page)
+    resp.status(200).send({"length":length,"data":currentPage})
     return "got all contacts successfully"
 }
 
-const updateContact = (req,resp) => {
+const updateContact = async (req,resp) => {
    
     const missingInput = checkForRequiredInputs(req,["propertyTobeUpdated","value"],["username","contactName"])
     
     if(missingInput){
-        resp.status(401).send(`${missingInput} is required`)
+        resp.status(401).send({"message":`${missingInput} is required`})
         return `${missingInput} is required`
     }
 
-    const [isSelfUser,Payload,indexOfSelfUser] = JwtPayload.isValidSelfUser(req,resp)
+    const [isSelfUser,selfPayload,selfUser] = await JwtPayload.isValidSelfUser(req,resp)
     if(!isSelfUser){
         return "unauthorized access"
     }
     const {propertyTobeUpdated,value} = req.body
     const contactName = req.params.contactName
 
-    const [isUpdated,UpdatedContact,message] = User.allUsers[indexOfSelfUser].updateContact(contactName,propertyTobeUpdated,value)
+    const [isUpdated,UpdatedContact,message] = await selfUser.updateContact(contactName,propertyTobeUpdated,value)
     if(!isUpdated){
-        resp.status(500).send(message)
+        resp.status(500).send({"data":UpdatedContact,"message":message})
         return message
     } 
-    resp.status(200).send(UpdatedContact)
+    resp.status(200).send({"data":UpdatedContact,"message":message})
     return message
 }
 
-const deleteContact = (req,resp) => { 
+const deleteContact = async (req,resp) => { 
 
     const missingInput = checkForRequiredInputs(req,requiredBodyInput=[] ,requiredParamsInput=["username","contactName"])
     
     if(missingInput){
-        resp.status(401).send(`${missingInput} is required`)
+        resp.status(401).send({"message":`${missingInput} is required`})
         return `${missingInput} is required`
     }
 
-    const [isSelfUser,Payload,indexOfSelfUser] = JwtPayload.isValidSelfUser(req,resp)
+    const [isSelfUser,selfPayload,selfUser] = await JwtPayload.isValidSelfUser(req,resp)
     if(!isSelfUser){
         return "unauthorized access"
     }
     const contactName = req.params.contactName
-    const [isDeleted,message] = User.allUsers[indexOfSelfUser].deleteContact(contactName)
+    const [isDeleted,message] = await selfUser.deleteContact(contactName)
     if(!isDeleted){
-        resp.status(500).send(message)
+        resp.status(500).send({"message":message})
         return message
     }
-    resp.status(200).send(message)
+    resp.status(200).send({"message":message})
     return message
 }
 

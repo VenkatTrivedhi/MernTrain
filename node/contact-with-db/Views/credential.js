@@ -4,30 +4,27 @@ const DatabaseMongoose = require("../repository/database")
 
 
 class Credential {
-    constructor(username, password) {
-        this.
+    constructor(id,username, password) {
+        this.id = id
         this.username = username
         this.password = password
     }
 
     static async createCredential(username,password){
         const db = new DatabaseMongoose()
-        id = uuid.v4()
-        newCredentialObject=new Credential(id,username,password)
-        db.insertCredential(newCredentialObject)
-        return newCredentialObject
+        const id = uuid.v4()
+        const newCredentialObject=new Credential(id,username,password)
+        await newCredentialObject.getPasswordHashed()
+        const  [newCredentialRecord,message] = await db.insertCredential(newCredentialObject)
+        return [newCredentialObject,message]  
     }
 
-    static async reCreatedCredentialObject(record){
-        id = record.id
-        username = record.username
-        password =  record.password
-        reCreatedCredentialObject=new Credential(id,username,password)
+    static reCreatedCredentialObject(record){
+        console.log(record)
+        const reCreatedCredentialObject = new Credential(record.id,record.username,record.password)
         return reCreatedCredentialObject
     }
-    static async getCrendentil(){
-        
-    }
+
 
     async getPasswordHashed() {
         this.password = await bcrypt.hash(this.password, 10)

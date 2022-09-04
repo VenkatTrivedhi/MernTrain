@@ -2,12 +2,12 @@ const mongoose = require("mongoose")
 
 
 const ContactSchema = mongoose.Schema({
-    id: { type: Number , required:true},
+    id: { type: String , required:true},
     firstName : { type: String , required:true}, 
     lastName : { type: String , required:true}, 
-    fullName : { type: String , unique:true ,required:true}, 
+    fullName : { type: String ,required:true}, 
     isActive: { type: Boolean,required:true},
-    contactDetails: { type: [mongoose.SchemaTypes.ObjectId],ref:"contacts",required:true}
+    contactDetails: { type: [mongoose.SchemaTypes.ObjectId],ref:"contactDetails",required:true}
 }, {
     timestamps: true
 })
