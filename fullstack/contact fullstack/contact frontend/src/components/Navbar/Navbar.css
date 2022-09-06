@@ -1,0 +1,70 @@
+.Nav{
+    background-color: rgb(255, 252, 252);
+    display: flex ;
+    flex-wrap: wrap;
+    width: 100vw;
+    height : 100px;
+    box-shadow: 0px 0px 15px 1px hwb(0 0% 100%);
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.nav-links{
+    margin: auto 0px auto auto;
+    width: 40vw;
+    display: flex;
+    justify-content: flex-end;
+    list-style: none;
+}
+
+.nav-links button{
+    background-color : transparent;
+    color: rgb(132, 0, 0) ;
+    border-style: none;
+    margin: 10px 10px 10px 10px;
+    border-radius: 5px;
+    width: 150px;
+    height: 50px;
+    font-size: 20px
+}
+
+.nav-links button:hover{
+    background-color : rgb(244, 224, 224);
+    color: black;
+    border-style: none;
+    margin: 10px 10px 10px 10px;
+    border-radius: 5px;
+    width: 150px;
+    height: 50px;
+    font-size: 20px
+}
+
+#user{
+    margin-bottom: 5px;
+    height: 100px;
+    margin-bottom:auto 40px auto 40px;
+    padding-bottom: 5px; 
+}
+
+#user h5{
+    font-size: 40px;
+    color: rgb(83, 83, 0);
+    padding-top: 10px;
+    margin: auto;
+    font-weight:600;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#user h1{
+    font-size: 20px;
+    color: rgba(132, 132, 0, 0.653);
+    font-weight: 200;
+    margin: 0px auto auto auto;
+
+}
+
+.Nav img{
+    margin:auto 40px auto 40px;
+    width: 80px;
+}
+
