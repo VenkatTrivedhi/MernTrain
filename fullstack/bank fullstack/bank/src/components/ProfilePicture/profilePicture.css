@@ -1,0 +1,13 @@
+.profile-picture{
+    margin: auto;
+    width: 200px;
+    height: 200px;
+    border-style: solid;
+    background-color: rgba(253, 255, 202, 0.479);
+    border-radius: 15px;
+}
+.profile-picture img{
+    width: inherit;
+    height: inherit;
+    position: absolute;
+}

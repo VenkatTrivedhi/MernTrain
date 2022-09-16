@@ -3,6 +3,8 @@ const Bank = require("./bank")
 const Credential = require("./credential")
 const Account = require("./account")
 const DatabaseMongoose = require('../respository/database')
+const Transaction = require("./transaction")
+const paginater = require("./paginater")
 
 class User {
 
@@ -72,19 +74,23 @@ class User {
 
         if (!fetchedUserRecord.isActive) {
             const userObject = User.reCreateUserObject(fetchedUserRecord)
-            userObject.isActive = true
-            const [result, messageOfResult] = await User.db.replaceUser(userObject)
-            if (!result) {
-                return [null, messageOfResult]
-            }
-            if (result.modifiedCount == 0) {
-                return [null, messageOfResult]
-            }
-            const [userRecord, messageOfUserRecord] = await User.db.fetchUser(fetchedCredentialRecord)
-            const updatedUser = User.reCreateUserObject(userRecord)
-            return [updatedUser, messageOfResult]
+            return userObject.#reactivateUser()
         }
         return [null, "username already exist,try new one"]
+    }
+
+    async #reactivateUser() {
+        this.isActive = true
+        const [result, messageOfResult] = await User.db.replaceUser(this)
+        if (!result) {
+            return [null, messageOfResult]
+        }
+        if (result.modifiedCount == 0) {
+            return [null, messageOfResult]
+        }
+        const [userRecord, messageOfUserRecord] = await User.db.fetchUser(fetchedCredentialRecord)
+        const updatedUser = User.reCreateUserObject(userRecord)
+        return [updatedUser, messageOfResult]
     }
 
     static reCreateUserObject(record) {
@@ -98,20 +104,11 @@ class User {
         return UserObject
     }
 
-    async creatUser(firstName, lastName, username, password) {
-        let fullName = `${firstName} ${lastName}`
-        const newCredential = new Credential(username, password)
-        newCredential.password = await newCredential.getHashedPassword()
-        const newUser = new User(fullName, newCredential)
-        User.allUser.push(newUser)
-        return newUser
-    }
-
-
+    
     static async findUser(username) {
         const [fetchedCredentialRecord, messageOfFetchCredential] = await User.db.fetchCredential(username)
         if (!fetchedCredentialRecord) {
-            return [null, "username already exist,try new one"]
+            return [null, "user not found"]
         }
         const [fetchedUserRecord, msgOfUserFetch] = await User.db.fetchUser(fetchedCredentialRecord)
         console.log(fetchedCredentialRecord)
@@ -128,7 +125,7 @@ class User {
             await User.db.fetchCredential(username)
 
         if (!fetchedCredentialRecord) {
-            return [null, "username already exist,try new one"]
+            return [null, "username not found"]
         }
 
         const [fetchedUserRecord, msgOfUserFetch] = User.db.fetchUser(fetchedCredentialRecord)
@@ -149,37 +146,124 @@ class User {
         return [false, null, "invalid credential"]
     }
 
+    async #debitUser(amount,user,type,counterCustomer){
+                
+        const account = Account.reCreateAccount(user.account)
+        const [isDebited,messageOfDebit,balance,timestamp] = await account.debit(amount)
+    
+        const [transactionRecord,messageTransaction] = 
+            await Transaction.CreateTransaction(amount,type,"debit",isDebited,timestamp,
+                balance,counterCustomer)
+        
+        let transaction = null
+        if(transactionRecord){
+            const [PushResult,messageOfPushResult] = 
+                await User.db.pushTransaction(user.account,transactionRecord._id)
+            transaction = Transaction.reCreateTransaction(transactionRecord)
+        }
 
-    withdraw(amount) {
-        const account = Account.reCreateAccount(this.account)
-        return account.deduct("withdraw", amount)
-
+        if(!isDebited){
+            return [isDebited,messageOfDebit,transaction]    
+        }
+        if(!transactionRecord){
+            return [isDebited,`${type} of ${amount} from account number ****`+
+        `${user.account.account_no.slice(-3,)} is success,but failed to store the details`,null]
+        }
+       
+        return [isDebited,`withdrawal of ${amount} from account number ****`+
+        `${user.account.account_no.slice(-3,)} is success`,
+        transaction]
+    
     }
 
-    deposit(amount) {
-        const account = Account.reCreateAccount(this.account)
-        return account.add("deposit", amount)
+    async #creditUser(amount,user,type,counterCustomer){
+        const account = Account.reCreateAccount(user.account)
+        const [isCredited,messageOfDebit,balance,timestamp] = await account.credit(amount)
+    
+        const [transactionRecord,messageTransaction] = 
+            await Transaction.CreateTransaction(amount,type,"credit",isCredited,timestamp,
+            balance,counterCustomer)
+        
+        let transaction = null
+        if(transactionRecord){
+            const [PushResult,messageOfPushResult] = 
+                await User.db.pushTransaction(user.account,transactionRecord._id)
+            transaction = Transaction.reCreateTransaction(transactionRecord)
+        }
+
+        if(!isCredited){
+            return [isCredited,messageOfDebit,transaction]    
+        }
+        if(!transactionRecord){
+            return [isCredited,`${type} of ${amount} rupees from account number ****`+
+        `${user.account.account_no.slice(-3,)} is success,but failed to store the details`,null]
+        }
+       
+        return [isCredited,`${type} of ${amount} rupees from account number  ****`+
+        `${user.account.account_no.slice(-3,)} is success `,
+        transaction ]
     }
 
-    transfer(amount, debitBankAbbrevation, creditUserName, creditBankAbbrevation) {
-        let [indexOfCustomer, isCustomerExist, messageOfCustomer] = Customer.findCustomer(creditUserName)
+    async withdraw(amount) {
+        return await this.#debitUser(amount,this,"withdrawal")
+    }
 
-        if (!isCustomerExist) {
-            return [false, messageOfCustomer]
+    async deposit(amount) {
+        return await this.#creditUser(amount,this,"deposit")
+    }
+
+    async transfer(amount, creditUserName) {
+        const [creditUser,messageOfCreditUser]= await User.findUser(creditUserName)
+        if(!creditUser){
+            return [false,`credit ${messageOfCreditUser}`,null]
         }
-        let [isWithdrawSuccess, messageOfWithdraw] = this.withdraw(amount, debitBankAbbrevation)
-        if (!isWithdrawSuccess) {
-            return [false, messageOfWithdraw]
+        const [isDebited,messageOfDebit,transactionOfDebit] = 
+            await this.#debitUser(
+                amount,
+                this,
+                "transfer",
+                {name:creditUser.fullName,account_no:creditUser.account.account_no})
+        if(!isDebited){
+            return [false,messageOfDebit,transactionOfDebit]
         }
-        let [isDepositSuccess, messageOfDepisit] = Customer.allCustomer[indexOfCustomer].deposit(amount, creditBankAbbrevation)
-        if (isDepositSuccess) {
-            return [true, "transfer successfull"]
+        if(!transactionOfDebit){
+            return [false,"transaction failed, amount will be refunded",null]
         }
-        let isRedeposite = this.deposit(amount, debitBankAbbrevation)
-        if (!isRedeposite) {
-            return [false, "transaction has failed,amount debited will be refunded"]
+
+        const [isCredited,messageOfCredit,transactionOfCredit] = 
+            await this.#creditUser(
+                amount,
+                creditUser,
+                "transfer",
+                {name:this.fullName,account_no:this.account.account_no})
+        if(!isCredited){
+
+            return [false,messageOfCredit,transactionOfDebit]
         }
-        return [false, "trasaction failed,no amount deducted"]
+        if(!transactionOfCredit){
+            return [false,"transaction failed, amount will be refunded if deducted",null]
+        }
+        return [true,messageOfDebit,transactionOfDebit]        
+    }
+
+    async getAllTransactionsObjects(limit,page){
+        const currentTransactionsRecord = paginater(this.account.transactions,limit,page)
+        let currentPage = []
+        for (let index = 0; index < currentTransactionsRecord.length; index++) {
+            let transactionObject = Transaction.reCreateTransaction(currentTransactionsRecord[index])
+            currentPage.push(transactionObject)
+        }
+        return [this.account.transactions.length,currentPage] 
+    }
+    async getAllUsernames(){
+        const [listOfUsernames,message] = await User.db.fetchUsernames(this.credential.username)
+        return listOfUsernames
+    }
+    async getBalance(){
+        if(!this.isActive){
+            return [null,"this user is deleted"]
+        }
+        return [this.account.balance,"balance fetched"]
     }
 }
 console.log(User.createSuperUser("super", "user", "admin", "admin@123"))

@@ -7,8 +7,9 @@ class JwtPayload{
     constructor(user){
         this.username = user.credential.username
         this.role = user.role
-        this.firstName = user.firstname
+        this.fullname = user.fullname
         this.isActive = user.isActive
+        this.balance = user.account.balance
     }
 
     createtoken(){
@@ -19,6 +20,7 @@ class JwtPayload{
         const Payload = Jwt.verify(cookie,JwtPayload.secret)
         return Payload
     }
+
 
     static async isValidAdmin(req,resp){
         const myToken = req.cookies["mytoken"]
@@ -35,6 +37,30 @@ class JwtPayload{
         if(!user){
             resp.clearCookie("mytoken")
             resp.status(401).send({"message":"authenticated user is deleted"})
+            return [false,null,null]
+        }
+        return [true,newPayload,user]
+    }
+
+    static async isValidSelfUser(req,resp){
+        const myToken = req.cookies["mytoken"]
+        
+        if(!myToken){
+            resp.status(401).send({"message":"login required"})
+            return [false,null,null]
+        }
+
+        const newPayload = JwtPayload.verifyCookies(myToken)
+
+        if(newPayload.username!=req.params["username"]){
+            resp.status(403).send({"message":"User not permited"})
+            return [false,null,null]
+        }
+        
+        const [user, message] = await User.findUser(req.params["username"])
+
+        if(!user){
+            resp.status(403).send({"message":"authenticated is deleted"})
             return [false,null,null]
         }
         return [true,newPayload,user]
@@ -104,29 +130,6 @@ class JwtPayload{
         return [true,newPayload,user]
     }
 
-    static async isValidSelfUser(req,resp){
-        const myToken = req.cookies["mytoken"]
-        
-        if(!myToken){
-            resp.status(401).send({"message":"login required"})
-            return [false,null,null]
-        }
-
-        const newPayload = JwtPayload.verifyCookies(myToken)
-
-        if(newPayload.username!=req.params["username"]){
-            resp.status(403).send({"message":"User not permited"})
-            return [false,null,null]
-        }
-        
-        const [user, message] = await User.findUser(req.params["username"])
-
-        if(!user){
-            resp.status(403).send({"message":"authenticated is deleted"})
-            return [false,null,null]
-        }
-        return [true,newPayload,user]
-    }
 }
 
 module.exports = JwtPayload

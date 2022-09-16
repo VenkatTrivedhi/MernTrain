@@ -7,7 +7,7 @@ const UserSchema = mongoose.Schema({
     credential : { type:mongoose.SchemaTypes.ObjectId,ref:"credential",unique:true,required:true},
     role: { type: String },
     isActive: { type: Boolean },
-    account : { type: [mongoose.SchemaTypes.ObjectId],ref:"account" },
+    account : { type: mongoose.SchemaTypes.ObjectId,ref:"account" },
 }, {
     timestamps: true
 })

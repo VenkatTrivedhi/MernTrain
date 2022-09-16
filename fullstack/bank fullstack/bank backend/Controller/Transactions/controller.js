@@ -2,89 +2,85 @@ const JwtPayLoad = require("../../Views/jwtPayLoad")
 const User = require("../../Views/user")
 const checkForRequiredInputs = require("../../Views/checkForRequiredInputs")
 
-const withdraw = (req,resp)=>{
-    const [isValid,Payload] = JwtPayLoad.isValidCustomer(req,resp)
-    if(!isValid){
+
+const withdraw = async (req,resp)=>{
+    const missingInput = checkForRequiredInputs(req,["amount"],["username"])
+    
+    if(missingInput){
+        resp.status(401).send({"message":`${missingInput} is required`})
+        return `${missingInput} is required`
+    }
+    const [isSelfUser,Payload,selfUser] = await JwtPayLoad.isValidSelfUser(req,resp)
+    if(!isSelfUser){
         return
     }
-    const [indexOfcustomer,isCustomerExist,message] = Customer.findCustomer(Payload.username)
-    if(!isCustomerExist){
-        resp.status(403).send(message)
-        return
-    }
-    const {bankAbbrevation,amount} = req.body
-    const [isWithdrawn,messageOfWithdraw] = Customer.allCustomer[indexOfcustomer].withdraw(amount,bankAbbrevation)
+    const amount = req.body.amount 
+    const [isWithdrawn,messageOfWithdraw,transaction] = await selfUser.withdraw(amount)
     if(!isWithdrawn){
-        resp.status(500).send(messageOfWithdraw)
+        resp.status(500).send({"message":messageOfWithdraw,"transaction":transaction})
         return
     }
-    resp.status(200).send(messageOfWithdraw)
+    resp.status(200).send({"message":messageOfWithdraw,"transaction":transaction})
 }
 
-const deposit = (req,resp)=>{
-    const [isValid,Payload] = JwtPayLoad.isValidCustomer(req,resp)
-    if(!isValid){
-        return
-    }
-    const [indexOfcustomer,isCustomerExist,message] = Customer.findCustomer(Payload.username)
-    if(!isCustomerExist){
-        resp.status(403).send(message)
-        return
-    }
-    const {bankAbbrevation,amount} = req.body
-    const [isDepositSuccess,messageOfDepisit] = Customer.allCustomer[indexOfcustomer].deposit(amount,bankAbbrevation)
-    if(!isDepositSuccess){
-        resp.status(500).send(messageOfDepisit)
-        return
-    }
-    resp.status(200).send(messageOfDepisit)
-    return
-}
-
-const transfer=(req,resp)=>{
-    const [isValid,Payload] = JwtPayLoad.isValidCustomer(req,resp)
-    if(!isValid){
-        return
-    }
+const deposit = async (req,resp)=>{
+    const missingInput = checkForRequiredInputs(req,["amount"],["username"])
     
-    const [indexOfcustomer,isCustomerExist,message] = Customer.findCustomer(Payload.username)
-    if(!isCustomerExist){
-        resp.status(403).send(message)
+    if(missingInput){
+        resp.status(401).send({"message":`${missingInput} is required`})
+        return `${missingInput} is required`
+    }
+    const [isSelfUser,Payload,selfUser] = await JwtPayLoad.isValidSelfUser(req,resp)
+    if(!isSelfUser){
         return
     }
-    const {debitbankAbbrevation,amount,creditUserName,creditBankAbbrevation} = req.body
-    let customer = Customer.allCustomer[indexOfcustomer]
-    console.log(debitbankAbbrevation , amount,creditUserName ,creditBankAbbrevation)
-    const [isTransfered,messageOfTransfer] = customer.transfer(amount,debitbankAbbrevation,creditUserName,creditBankAbbrevation)
-    if(!isTransfered){
-        resp.status(500).send(messageOfTransfer)
+    const amount = req.body.amount 
+    const [isDeposited,messageOfDeposit,transaction] = await selfUser.deposit(amount)
+    if(!isDeposited){
+        resp.status(500).send({"message":messageOfDeposit,"transaction":transaction})
         return
     }
-    resp.status(200).send(messageOfTransfer)
-    return
+    resp.status(200).send({"message":messageOfDeposit,"transaction":transaction})
 }
 
-const selfTransfer=(req,resp)=>{
-    const [isValid,Payload] = JwtPayLoad.isValidCustomer(req,resp)
-    if(!isValid){
-        return
-    }
+const transfer= async (req,resp)=>{
+    const missingInput = checkForRequiredInputs(req,["amount","creditUsername"],["username"])
     
-    const [indexOfcustomer,isCustomerExist,message] = Customer.findCustomer(Payload.username)
-    if(!isCustomerExist){
-        resp.status(403).send(message)
+    if(missingInput){
+        resp.status(401).send({"message":`${missingInput} is required`})
+        return `${missingInput} is required`
+    }
+    const [isSelfUser,Payload,selfUser] = await JwtPayLoad.isValidSelfUser(req,resp)
+    if(!isSelfUser){
         return
     }
-    const {amount, debitBankAbbrevation, creditBankAbbrevation} = req.body
-    console.log(amount,debitBankAbbrevation,creditBankAbbrevation)
-    let customer = Customer.allCustomer[indexOfcustomer]
-    const [isTransfered,messageOfTransfer] = customer.selfTransfer(amount,debitBankAbbrevation,creditBankAbbrevation)
+    const amount = req.body.amount
+    const creditUsername = req.body.creditUsername
+    const [isTransfered,messageOfTransfer,transaction] = await selfUser.transfer(amount,creditUsername)
     if(!isTransfered){
-        resp.status(500).send(messageOfTransfer)
+        resp.status(500).send({"message":messageOfTransfer,"transaction":transaction})
         return
     }
-    resp.status(200).send(messageOfTransfer)
-    return
+    resp.status(200).send({"message":messageOfTransfer,"transaction":transaction})
 }
 
-module.exports = {withdraw,deposit,transfer,selfTransfer}
+const getAllTransactions = async(req,resp)=>{
+    const missingInput = checkForRequiredInputs(req,requiredBodyInput=[] ,requiredParamsInput=["username"])
+    if(missingInput){
+   
+        resp.status(401).send({"message":`${missingInput} is required`})
+        return `${missingInput} is required`
+    }
+    const [isSelfUser,Payload,selfUser] = await JwtPayLoad.isValidSelfUser(req,resp)
+    if(!isSelfUser){
+        return
+    }
+    const page =  req.query.page
+    const limit =  req.query.limit
+    
+    const [length,currentPage] = await selfUser.getAllTransactionsObjects(limit,page)
+    resp.status(200).send({"length":length,"data":currentPage})
+    return "got all contacts successfully"
+}
+
+module.exports = {withdraw,deposit,transfer,getAllTransactions}

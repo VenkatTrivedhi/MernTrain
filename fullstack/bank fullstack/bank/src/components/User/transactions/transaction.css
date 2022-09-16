@@ -1,0 +1,125 @@
+.table{
+    padding-top: 140px;
+}
+table{
+    box-shadow: 0px 0px 5px 1px;
+}
+
+.user-table{
+    margin: auto;
+    background-color: rgba(255, 255, 255, 0.905);
+}
+
+thead td{
+    color: rgb(183, 0, 0);
+    font-weight: 600;
+    background-color: rgb(243, 243, 243);
+}
+
+.table-row td{
+    font-size: 20px;
+    padding: 10px 20px;
+}
+
+
+.table-row input{
+    height: 30px;
+    background-color: transparent;
+    border-style: hidden;
+    border-radius: 5px;
+    overflow:hidden;
+}
+
+.table-row input:hover{
+    height: 30px;
+    background-color: transparent;
+    border-style: solid;
+    border-radius: 5px;
+    overflow: visible;
+    
+}
+
+.table-row input .edit:hover{
+    width: 80px;
+    height: 30px;
+    background-color: transparent;
+    border-style: solid;
+    border-radius: 5px;
+    overflow: visible;
+}
+
+.table-row .edit{
+  visibility: collapse;
+}
+
+.table-row .discard{
+  visibility: collapse;
+}
+
+.table-row .edit-visible{
+  visibility:visible;
+  color: rgba(18, 108, 0, 0.523);
+  margin: 2px;
+  font-size: 20px;
+}
+
+.table-row .discard-visible{
+    visibility:visible;
+    color: rgba(255, 0, 0, 0.354);
+    margin: 2px;
+    font-size: 20px;
+  }
+
+.table-row .edit-visible:hover{
+  visibility:visible;
+  color: rgb(12, 74, 0);
+  margin: 2px;
+  font-size: 20px;
+}
+
+.table-row .discard-visible:hover{
+    visibility:visible;
+    color: rgb(255, 0, 0);
+    margin: 2px;
+    font-size: 20px;
+  }
+
+.table-head td{
+    font-size: 20px;
+    padding: 10px 20px;
+    color: rgba(255, 119, 119, 0.758);
+    background-color: rgb(227, 227, 227);
+}
+
+.icon{
+    color: rgba(0, 0, 0, 0.379);
+    padding: 0px 10px 0px 10px;
+}
+.icon:hover{
+    color: rgb(0, 0, 0);
+    padding: 0px 10px 0px 10px;
+}
+
+.collapsed-input{
+    visibility: collapse;
+
+}
+
+.collapsed-value{
+    visibility :collapse;
+}
+
+tfoot{
+    
+    width:inherit;
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#balance{
+    font-size: 20px;
+    color: rgb(88, 0, 0);
+    font-weight: bold;
+}
+

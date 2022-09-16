@@ -3,14 +3,6 @@ const JwtPayload = require("../../Views/JwtPayload")
 const checkForRequiredInputs = require("../../Views/checkForRequiredInputs")
 
 const createUser = async (req, resp) => {
-
-    const [isAdmin,adminPayload,admin] = await JwtPayload.isValidAdmin(req, resp)
-    if (!isAdmin) {
-        return "unauthorized access"
-    }
-
-    const {lastname,firstname,username,password,role} = req.body
-
     const missingInput = checkForRequiredInputs(req,["lastName","firstName","username","password","role"])
     
     if(missingInput){
@@ -18,7 +10,14 @@ const createUser = async (req, resp) => {
         return `${missingInput} is required`
     }
 
-    const [newUser,message] = await admin.createUser(firstname, lastname, username, password, role)
+    const [isAdmin,adminPayload,admin] = await JwtPayload.isValidAdmin(req, resp)
+    if (!isAdmin) {
+        return "unauthorized access"
+    }
+
+    const {lastName,firstName,username,password,role} = req.body
+
+    const [newUser,message] = await admin.createUser(firstName, lastName, username, password, role)
     if(!newUser){
         resp.status(500).send({"message":message})
         return
@@ -95,4 +94,14 @@ const deleteUser = async (req, resp) => {
     return "deleted successfully"
 }
 
-module.exports = { createUser, getAllUser, getUser ,updateUser, deleteUser }
+const getBalance =  async (req,resp) =>{
+    const [isSelfUser,selfPayload,selfUser] = await JwtPayload.isValidSelfUser(req, resp)
+    if (!isSelfUser) {
+        return "unauthorized access"
+    }
+    const [balance,message] = await selfUser.getBalance()
+    resp.status(200).send({"data":balance,"message":message})
+    return "balance fetched"
+}
+
+module.exports = { createUser, getAllUser, getUser ,updateUser, deleteUser,getBalance}

@@ -1,5 +1,5 @@
 const uuid = require("uuid")
-const DatabaseMongoose = require("../repository/database")
+const DatabaseMongoose = require("../respository/database")
 
 class Roles{
     constructor(id,role){

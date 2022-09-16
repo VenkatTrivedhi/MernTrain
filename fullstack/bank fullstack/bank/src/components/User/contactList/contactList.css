@@ -1,0 +1,14 @@
+.Cards-container{
+    width: 98vw;
+    margin: auto;
+    padding : 80px;
+    padding-top: 0px;
+    grid-template-columns: auto auto auto;
+}
+
+.pagination{
+    justify-content: center;
+}
+
+
+

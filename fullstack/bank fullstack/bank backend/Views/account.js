@@ -39,32 +39,31 @@ class Account {
         return this.balance>=amount
     }
 
-    deduct(typeOftransaction,amount){
-        if (this.isSufficientBalance(amount)) {
-            return [false, "balance is insuffiecient"]
+    async debit(amount){
+        if (!this.isSufficientBalance(amount)) {
+            return [false, "insuffiecient balance",this.balance,Date.now()]
         }
-        this.balance = this.balance - amount
-        const [result,messageOfResult] = Account.db.replaceAccount(this)
+        const [result,messageOfResult] = await Account.db.debitAccount(this,amount)
         if(!result){
-            return [false,messageOfResult]
+            return [false,messageOfResult,this.balance,Date.now()]
         }
         if(result.modifiedCount==0){
-            return [false,"transaction failed"]
+            return [false,"unknown error",this.balance,Date.now()]
         }
-        return [true, "withdraw successful"]
+        const [fetchedAccount,message] = await Account.db.fetchAccount(this.account_no)
+        return [true,`debit successful`,fetchedAccount.balance,fetchedAccount.updatedAt]
     }
 
-    add(typeOftransaction,amount){
-        
-        this.balance = this.balance + amount
-        const [result,messageOfResult] = Account.db.replaceAccount(this)
+    async credit(amount){
+        const [result,messageOfResult] = await Account.db.creditAccount(this,amount)
         if(!result){
-            return [false,messageOfResult]
+            return [false,messageOfResult,this.balance,Date.now()]
         }
         if(result.modifiedCount==0){
-            return [false,"transaction failed"]
+            return [false,"unknown error",this.balance,Date.now()]
         }
-        return [true, "withdraw successful"]
+        const [fetchedAccount,message] = await Account.db.fetchAccount(this.account_no)
+        return [true,`credit successful`,fetchedAccount.balance,fetchedAccount.updatedAt]
     }
 }
 

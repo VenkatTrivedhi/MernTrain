@@ -26,11 +26,13 @@ class DatabaseMongoose {
     static hadleError = (err) => {
         if (err.name === 'ValidationError') {
             let field = Object.keys(err.errors)[0]
+            console.log(`${field} is required`)
             return [null, `${field} is required`];
         }
 
         if (err.code && err.code == 11000) {
             let field = Object.keys(err.keyValue)
+            console.log( `${field} already exist,try new one`)
             return [null, `${field} already exist,try new one`]
         }
 
@@ -74,6 +76,19 @@ class DatabaseMongoose {
         }
     }
 
+    async fetchUsernames(username) {
+        try {
+            console.log(username)
+            let record = await CredentialModel.find({},{username:1,_id:0})
+            return [record,"user fetched"]
+        }
+
+        catch (err) {
+            return DatabaseMongoose.hadleError(err)
+        }
+    
+    }
+
     //user
     async insertUser(user) {
         try {
@@ -105,6 +120,8 @@ class DatabaseMongoose {
         }
     
     }
+
+   
 
     async fetchAllUsers() {
         try {
@@ -188,7 +205,6 @@ class DatabaseMongoose {
         }
     }
 
-
     async replaceAccount(account) {
         try {
             let record = await AccountModel.updateOne({ account_no: account.account_no }, account)
@@ -199,14 +215,30 @@ class DatabaseMongoose {
         }
     }
 
-
-
-    //contactDeatails
-    async insertContactDetails(transaction) {
-        
+    async creditAccount(account,amount) {
         try {
-            let newRecord = await TransactionModel.create(transaction)
-            return [newRecord, "contact details added successfully"]
+            let record = await AccountModel.updateOne({ account_no: account.account_no }, {$inc: {"balance": amount}})
+            return [record, "account updated successfully"]
+        }
+        catch (err) {
+            return DatabaseMongoose.hadleError(err)
+        }
+    }
+
+    async debitAccount(account,amount) {
+        try {
+            let record = await AccountModel.updateOne({ account_no: account.account_no },  {$inc: {"balance": -amount}})
+            return [record, "account updated successfully"]
+        }
+        catch (err) {
+            return DatabaseMongoose.hadleError(err)
+        }
+    }
+
+    async pushTransaction(account,id) {
+        try {
+            let record = await AccountModel.updateOne({ account_no: account.account_no },  {$push: {"transactions": id}})
+            return [record, "account updated successfully"]
         }
         catch (err) {
             return DatabaseMongoose.hadleError(err)
@@ -214,6 +246,18 @@ class DatabaseMongoose {
     }
 
 
+    //Transaction
+    async insertTransaction(transaction) {
+        
+        try {
+            let newRecord = await TransactionModel.create(transaction)
+            return [newRecord, "transaction added successfully"]
+        }
+        catch (err) {
+            console.log(err)
+            return DatabaseMongoose.hadleError(err)
+        }
+    }
     //roles
     async insertRole(roleObject){
         try {
